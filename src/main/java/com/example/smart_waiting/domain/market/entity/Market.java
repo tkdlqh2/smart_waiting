@@ -23,11 +23,16 @@ public class Market {
     @JoinColumn(name = "user_id")
     private User owner;
 
+    @Column(nullable = false)
     private String name;
+    @Column(nullable = false)
     private String registrationNum;
+    @Column(nullable = false)
     private Long zipCode;
+    @Column(nullable = false)
     private String detailAddress;
-
+    @Column(nullable = false)
     private Long openHour;
+    @Column(nullable = false)
     private Long closeHour;
 }

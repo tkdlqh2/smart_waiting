@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Builder
 public class MarketWaitingInfoDTO {
 
-    private int waitingTeams;
-    private int expectedMinutes;
+    private Long waitingTeams;
+    private Long expectedMinutes;
 
 }

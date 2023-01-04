@@ -1,18 +1,21 @@
 package com.example.smart_waiting.domain.market.service;
 
+import com.example.smart_waiting.domain.market.dto.MarketWaitingInfoDTO;
+import com.example.smart_waiting.domain.market.repository.MarketWaitingTeamsRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class MarketReadServiceTest {
+class MarketReadServiceTest {
+
+    @Mock
+    private MarketWaitingTeamsRepository marketWaitingTeamsRepository;
 
     @InjectMocks
     private MarketReadService marketReadService;
@@ -20,15 +23,17 @@ public class MarketReadServiceTest {
     private final Long MARKET_ID = 1L;
 
     @Test
-    public void getWaitingInfoSuccess(){
+    void getWaitingInfoSuccess(){
         //given
+        given(marketWaitingTeamsRepository.getWaitingTeamsNum(MARKET_ID)).willReturn(2L);
+        given(marketWaitingTeamsRepository.getExpectedTimePerTeam(MARKET_ID)).willReturn(5L);
 
         //when
         MarketWaitingInfoDTO result = marketReadService.getWaitingInfo(MARKET_ID);
 
         //then
-        assertEquals(result.getWaitingTeams());
-        assertEquals(result.getExpectedMinutes());
+        assertEquals(2L, result.getWaitingTeams());
+        assertEquals(10L,result.getExpectedMinutes());
 
     }
 

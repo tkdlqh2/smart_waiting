@@ -12,8 +12,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import java.util.Optional;
-
 import static com.example.smart_waiting.exception.UserErrorCode.EMAIL_ALREADY_EXIST;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.BDDMockito.given;
@@ -67,10 +65,7 @@ class UserWriteServiceTest {
                 .phone("010-1111-2222")
                 .build();
 
-        given(userRepository.findByEmail("yhj7124@naver.com"))
-                .willReturn(Optional.of(User.builder()
-                        .email("yhj7124@naver.com")
-                        .build()));
+        given(userRepository.existsByEmail("yhj7124@naver.com")).willReturn(true);
 
         //when
         //then

@@ -21,7 +21,7 @@ public class UserWriteService {
     @Transactional
     public void createUser(UserInput userInput) {
 
-        if(userRepository.findByEmail(userInput.getEmail()).isPresent()){
+        if(userRepository.existsByEmail(userInput.getEmail())){
             throw new UserException(EMAIL_ALREADY_EXIST);}
 
 

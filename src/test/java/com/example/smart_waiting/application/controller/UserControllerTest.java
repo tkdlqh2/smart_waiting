@@ -56,4 +56,24 @@ class UserControllerTest {
                 .andDo(print());
 
     }
+
+    @Test
+    void registerFail_emailAlreadyExist() throws Exception {
+
+        doThrow(new UserException(EMAIL_ALREADY_EXIST))
+                .when(userWriteService).createUser(any());
+
+        mockMvc.perform(post("/api/v1/user/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(
+                                UserInput.builder()
+                                        .email("abc@gmail.com")
+                                        .password("Qlalfqjsgh!")
+                                        .name("홍길동")
+                                        .phone("010-1111-2222")
+                                        .build()
+                        )))
+                .andExpect(status().isBadRequest())
+                .andDo(print());
+    }
 }

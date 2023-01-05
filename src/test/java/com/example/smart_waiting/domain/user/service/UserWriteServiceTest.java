@@ -148,10 +148,13 @@ class UserWriteServiceTest {
                         .expireDateTime(LocalDateTime.now().minusDays(1))
                         .build()));
 
+        ArgumentCaptor<User> userCaptor = ArgumentCaptor.forClass(User.class);
+
         //when
         //then
         try{
             userWriteService.emailAuth(1L,"인증키~");
+            verify(userRepository,times(1)).delete(userCaptor.capture());
         } catch (Exception e){
             assertEquals(CODE_ALREADY_EXPIRED.getMessage(),e.getMessage());
         }

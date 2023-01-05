@@ -45,12 +45,13 @@ public class UserWriteService {
         //인증 메일 발송 처리 -> 카프카
     }
 
-    @Transactional
+    @Transactional(noRollbackFor = UserException.class)
     public void emailAuth(Long userId, String authKey) {
         User user = userRepository.findById(userId)
                 .orElseThrow(()->new UserException(USER_NOT_FOUND));
 
         if(user.getExpireDateTime().isBefore(LocalDateTime.now())){
+            userRepository.delete(user);
             throw new UserException(CODE_ALREADY_EXPIRED);
         } else if (!user.getAuthKey().equals(authKey)) {
             throw new UserException(CODE_MISMATCH);

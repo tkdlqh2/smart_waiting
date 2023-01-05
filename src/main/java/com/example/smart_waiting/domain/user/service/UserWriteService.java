@@ -9,8 +9,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import static com.example.smart_waiting.exception.UserErrorCode.EMAIL_ALREADY_EXIST;
-import static com.example.smart_waiting.exception.UserErrorCode.PHONE_ALREADY_EXIST;
+import java.time.LocalDateTime;
+import java.util.UUID;
+
+import static com.example.smart_waiting.domain.user.type.UserStatus.UNAPPROVED;
+import static com.example.smart_waiting.exception.UserErrorCode.*;
 
 @RequiredArgsConstructor
 @Service
@@ -18,10 +21,10 @@ public class UserWriteService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private static final Long EXPIRE_DAY = 3L;
 
     @Transactional
     public void createUser(UserInput userInput) {
-
         if(userRepository.existsByEmail(userInput.getEmail())){
             throw new UserException(EMAIL_ALREADY_EXIST);}
 
@@ -30,16 +33,30 @@ public class UserWriteService {
 
         String encryptPassword = passwordEncoder.encode(userInput.getPassword());
 
-        User user = User.builder()
+        userRepository.save(User.builder()
                 .name(userInput.getName())
                 .email(userInput.getEmail())
                 .password(encryptPassword)
                 .phone(userInput.getPhone())
-                .build();
-
-        userRepository.save(user);
-
+                .userStatus(UNAPPROVED)
+                .authKey(UUID.randomUUID().toString())
+                .expireDateTime(LocalDateTime.now().plusDays(EXPIRE_DAY))
+                .build());
         //인증 메일 발송 처리 -> 카프카
     }
 
+    @Transactional
+    public void emailAuth(Long userId, String authKey) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(()->new UserException(USER_NOT_FOUND));
+
+        if(user.getExpireDateTime().isBefore(LocalDateTime.now())){
+            throw new UserException(CODE_ALREADY_EXPIRED);
+        } else if (!user.getAuthKey().equals(authKey)) {
+            throw new UserException(CODE_MISMATCH);
+        }
+
+        user.approve();
+        userRepository.save(user);
+    }
 }

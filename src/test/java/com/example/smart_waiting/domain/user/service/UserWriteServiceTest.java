@@ -13,6 +13,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import static com.example.smart_waiting.exception.UserErrorCode.EMAIL_ALREADY_EXIST;
+import static com.example.smart_waiting.exception.UserErrorCode.PHONE_ALREADY_EXIST;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
@@ -74,6 +75,29 @@ class UserWriteServiceTest {
             throw new NoErrorException();
         } catch(Exception e){
             assertEquals(EMAIL_ALREADY_EXIST.getMessage(),e.getMessage());
+        }
+    }
+
+    @Test
+    void createUserFail_phoneAlreadyExist(){
+        //given
+        UserInput userInput = UserInput.builder()
+                .email("yhj7124@naver.com")
+                .password("1111")
+                .name("유형진")
+                .phone("010-1111-2222")
+                .build();
+
+        given(userRepository.existsByEmail("yhj7124@naver.com")).willReturn(false);
+        given(userRepository.existsByPhone("010-1111-2222")).willReturn(true);
+
+        //when
+        //then
+        try{
+            userWriteService.createUser(userInput);
+            throw new NoErrorException();
+        } catch(Exception e){
+            assertEquals(PHONE_ALREADY_EXIST.getMessage(),e.getMessage());
         }
     }
 }

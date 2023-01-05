@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import static com.example.smart_waiting.exception.UserErrorCode.EMAIL_ALREADY_EXIST;
+import static com.example.smart_waiting.exception.UserErrorCode.PHONE_ALREADY_EXIST;
 
 @RequiredArgsConstructor
 @Service
@@ -24,6 +25,8 @@ public class UserWriteService {
         if(userRepository.existsByEmail(userInput.getEmail())){
             throw new UserException(EMAIL_ALREADY_EXIST);}
 
+        if(userRepository.existsByPhone(userInput.getPhone())){
+            throw new UserException(PHONE_ALREADY_EXIST);}
 
         String encryptPassword = passwordEncoder.encode(userInput.getPassword());
 

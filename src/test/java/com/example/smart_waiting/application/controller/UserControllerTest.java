@@ -13,8 +13,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static com.example.smart_waiting.exception.UserErrorCode.EMAIL_ALREADY_EXIST;
-import static com.example.smart_waiting.exception.UserErrorCode.PHONE_ALREADY_EXIST;
+import static com.example.smart_waiting.exception.UserErrorCode.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doNothing;
@@ -158,14 +157,44 @@ class UserControllerTest {
     }
 
     @Test
-    void existPhoneFail() throws Exception {
+    void emailAuthSuccess() throws Exception {
 
-        given(userReadService.existPhone(any()))
-                .willReturn(true);
+        doNothing().when(userWriteService).emailAuth(1L,"authKey");
 
-        mockMvc.perform(get("/api/v1/user/phone/1111"))
-                .andExpect(status().isBadRequest())
+        mockMvc.perform(get("/api/v1/user/1/auth/authKey"))
+                .andExpect(status().isOk())
                 .andDo(print());
     }
 
+    @Test
+    void emailAuthFail_userNotFound() throws Exception {
+
+        doThrow(new UserException(USER_NOT_FOUND)).when(userWriteService).emailAuth(1L,"authKey");
+
+        mockMvc.perform(get("/api/v1/user/1/auth/authKey"))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.errorMessage").value(USER_NOT_FOUND.getMessage()))
+                .andDo(print());
+    }
+    @Test
+    void emailAuthFail_codeAlreadyExpired() throws Exception {
+
+        doThrow(new UserException(CODE_ALREADY_EXPIRED)).when(userWriteService).emailAuth(1L,"authKey");
+
+        mockMvc.perform(get("/api/v1/user/1/auth/authKey"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.errorMessage").value(CODE_ALREADY_EXPIRED.getMessage()))
+                .andDo(print());
+    }
+
+    @Test
+    void emailAuthFail_codeMismatch() throws Exception {
+
+        doThrow(new UserException(CODE_MISMATCH)).when(userWriteService).emailAuth(1L,"authKey");
+
+        mockMvc.perform(get("/api/v1/user/1/auth/authKey"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.errorMessage").value(CODE_MISMATCH.getMessage()))
+                .andDo(print());
+    }
 }

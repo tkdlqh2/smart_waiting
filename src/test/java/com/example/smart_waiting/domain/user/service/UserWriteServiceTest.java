@@ -16,8 +16,7 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 
 import static com.example.smart_waiting.domain.user.type.UserStatus.APPROVED;
-import static com.example.smart_waiting.exception.UserErrorCode.EMAIL_ALREADY_EXIST;
-import static com.example.smart_waiting.exception.UserErrorCode.PHONE_ALREADY_EXIST;
+import static com.example.smart_waiting.exception.UserErrorCode.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
@@ -122,5 +121,58 @@ class UserWriteServiceTest {
         verify(userRepository,times(1)).save(userCaptor.capture());
         User UserCaptorValue = userCaptor.getValue();
         assertEquals(APPROVED,UserCaptorValue.getUserStatus());
+    }
+
+    @Test
+    void emailAuthFail_userNotFound(){
+        //given
+        given(userRepository.findById(1L))
+                .willReturn(Optional.empty());
+
+        //when
+        //then
+        try{
+            userWriteService.emailAuth(1L,"인증키~");
+        } catch (Exception e){
+            assertEquals(USER_NOT_FOUND.getMessage(),e.getMessage());
+        }
+    }
+
+    @Test
+    void emailAuthFail_codeAlreadyExpired(){
+        //given
+        given(userRepository.findById(1L))
+                .willReturn(Optional.of(User.builder()
+                        .id(1L)
+                        .authKey("인증키~")
+                        .expireDateTime(LocalDateTime.now().minusDays(1))
+                        .build()));
+
+        //when
+        //then
+        try{
+            userWriteService.emailAuth(1L,"인증키~");
+        } catch (Exception e){
+            assertEquals(CODE_ALREADY_EXPIRED.getMessage(),e.getMessage());
+        }
+    }
+
+    @Test
+    void emailAuthFail_codeMismatch(){
+        //given
+        given(userRepository.findById(1L))
+                .willReturn(Optional.of(User.builder()
+                        .id(1L)
+                        .authKey("잘못된 인증키")
+                        .expireDateTime(LocalDateTime.now().plusDays(1))
+                        .build()));
+
+        //when
+        //then
+        try{
+            userWriteService.emailAuth(1L,"인증키~");
+        } catch (Exception e){
+            assertEquals(CODE_MISMATCH.getMessage(),e.getMessage());
+        }
     }
 }

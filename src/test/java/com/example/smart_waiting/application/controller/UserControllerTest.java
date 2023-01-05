@@ -49,7 +49,7 @@ class UserControllerTest {
                         .content(objectMapper.writeValueAsString(
                                 UserInput.builder()
                                         .email("abc@gmail.com")
-                                        .password("Qlalfqjsgh!")
+                                        .password("Qlalfqjsgh!1")
                                         .name("홍길동")
                                         .phone("010-1111-2222")
                                         .build()
@@ -70,7 +70,7 @@ class UserControllerTest {
                         .content(objectMapper.writeValueAsString(
                                 UserInput.builder()
                                         .email("abc@gmail.com")
-                                        .password("Qlalfqjsgh!")
+                                        .password("Qlalfqjsgh!1")
                                         .name("홍길동")
                                         .phone("010-1111-2222")
                                         .build()
@@ -91,7 +91,7 @@ class UserControllerTest {
                         .content(objectMapper.writeValueAsString(
                                 UserInput.builder()
                                         .email("abc@gmail.com")
-                                        .password("Qlalfqjsgh!")
+                                        .password("Qlalfqjsgh!1")
                                         .name("홍길동")
                                         .phone("010-1111-2222")
                                         .build()

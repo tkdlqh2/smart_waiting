@@ -7,6 +7,8 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import javax.validation.ConstraintViolationException;
+
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
 @Slf4j
@@ -30,6 +32,12 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<GlobalErrorResult> methodArgumentNotValidExceptionHandler(MethodArgumentNotValidException e){
         GlobalErrorResult result = GlobalErrorResult.of(e.getAllErrors().get(0).getDefaultMessage());
+        return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<GlobalErrorResult> constraintViolationExceptionHandler(ConstraintViolationException e){
+        GlobalErrorResult result = GlobalErrorResult.of(e.getMessage());
         return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
     }
 }

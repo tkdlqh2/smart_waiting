@@ -22,9 +22,19 @@ class UserReadServiceTest {
     @Test
     void existEmailSuccess(){
         //given
-        given(userRepository.existsByEmail(anyString())).willReturn(false);
+        given(userRepository.existsByEmail(anyString())).willReturn(true);
         //when
         var result = userReadService.existEmail("abc@gmail.com");
+        //then
+        assertTrue(result);
+    }
+
+    @Test
+    void existPhoneSuccess(){
+        //given
+        given(userRepository.existsByPhone(anyString())).willReturn(true);
+        //when
+        var result = userReadService.existPhone("010-1111-2222");
         //then
         assertTrue(result);
     }

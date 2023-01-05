@@ -67,7 +67,6 @@ class UserWriteServiceTest {
                 .phone("010-1111-2222")
                 .build();
 
-        given(passwordEncoder.encode("1111")).willReturn("2222");
         given(userRepository.findByEmail("yhj7124@naver.com"))
                 .willReturn(Optional.of(User.builder()
                         .email("yhj7124@naver.com")

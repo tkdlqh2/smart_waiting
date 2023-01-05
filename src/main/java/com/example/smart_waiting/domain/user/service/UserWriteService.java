@@ -3,10 +3,13 @@ package com.example.smart_waiting.domain.user.service;
 import com.example.smart_waiting.domain.user.dto.UserInput;
 import com.example.smart_waiting.domain.user.entity.User;
 import com.example.smart_waiting.domain.user.repository.UserRepository;
+import com.example.smart_waiting.exception.UserException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import static com.example.smart_waiting.exception.UserErrorCode.EMAIL_ALREADY_EXIST;
 
 @RequiredArgsConstructor
 @Service
@@ -17,6 +20,10 @@ public class UserWriteService {
 
     @Transactional
     public void createUser(UserInput userInput) {
+
+        if(userRepository.findByEmail(userInput.getEmail()).isPresent()){
+            throw new UserException(EMAIL_ALREADY_EXIST);}
+
 
         String encryptPassword = passwordEncoder.encode(userInput.getPassword());
 

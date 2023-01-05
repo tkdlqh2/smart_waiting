@@ -7,7 +7,7 @@ public class UserException extends RuntimeException{
 
     private final UserErrorCode errorCode;
 
-    UserException(UserErrorCode code){
+    public UserException(UserErrorCode code){
         super(code.getMessage());
         this.errorCode = code;
     }

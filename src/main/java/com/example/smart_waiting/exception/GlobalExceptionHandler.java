@@ -1,7 +1,9 @@
 package com.example.smart_waiting.exception;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -25,4 +27,9 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(result,e.getErrorCode().getHttpStatus());
     }
 
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<GlobalErrorResult> methodArgumentNotValidExceptionHandler(MethodArgumentNotValidException e){
+        GlobalErrorResult result = GlobalErrorResult.of(e.getAllErrors().get(0).getDefaultMessage());
+        return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
+    }
 }

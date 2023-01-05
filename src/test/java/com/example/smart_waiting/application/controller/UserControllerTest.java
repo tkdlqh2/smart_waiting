@@ -75,4 +75,24 @@ class UserControllerTest {
                 .andExpect(jsonPath("$.errorMessage").value(EMAIL_ALREADY_EXIST.getMessage()))
                 .andDo(print());
     }
+
+    @Test
+    void registerFail_invalidInput() throws Exception {
+
+        doNothing().when(userWriteService).createUser(
+                any());
+
+        mockMvc.perform(post("/api/v1/user/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(
+                                UserInput.builder()
+                                        .email("abc")
+                                        .password("1111")
+                                        .name("df")
+                                        .phone("asd")
+                                        .build()
+                        )))
+                .andExpect(status().isBadRequest())
+                .andDo(print());
+    }
 }

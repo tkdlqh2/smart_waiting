@@ -1,7 +1,10 @@
 package com.example.smart_waiting.domain.user.service;
 
 import com.example.smart_waiting.domain.user.dto.UserInput;
+import com.example.smart_waiting.domain.user.type.UserStatus;
 import com.example.smart_waiting.domain.user.entity.User;
+import com.example.smart_waiting.domain.user.entity.UserAuth;
+import com.example.smart_waiting.domain.user.repository.UserAuthRepository;
 import com.example.smart_waiting.domain.user.repository.UserRepository;
 import com.example.smart_waiting.exception.NoErrorException;
 import org.junit.jupiter.api.Test;
@@ -12,6 +15,10 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.time.LocalDateTime;
+import java.util.Optional;
+
+import static com.example.smart_waiting.domain.user.type.UserStatus.APPROVED;
 import static com.example.smart_waiting.exception.UserErrorCode.EMAIL_ALREADY_EXIST;
 import static com.example.smart_waiting.exception.UserErrorCode.PHONE_ALREADY_EXIST;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -24,10 +31,10 @@ class UserWriteServiceTest {
 
     @Mock
     private PasswordEncoder passwordEncoder;
-
     @Mock
     private UserRepository userRepository;
-
+    @Mock
+    private UserAuthRepository userAuthRepository;
     @InjectMocks
     private UserWriteService userWriteService;
 
@@ -99,5 +106,29 @@ class UserWriteServiceTest {
         } catch(Exception e){
             assertEquals(PHONE_ALREADY_EXIST.getMessage(),e.getMessage());
         }
+    }
+
+    @Test
+    void emailAuthSuccess(){
+        //given
+        given(userAuthRepository.findByUserId(1L))
+                .willReturn(Optional.of(UserAuth.builder()
+                                .userId(1L)
+                        .string("인증키~")
+                        .expiredTime(LocalDateTime.now().plusDays(1))
+                        .build()));
+
+        ArgumentCaptor<User> userCaptor = ArgumentCaptor.forClass(User.class);
+        ArgumentCaptor<UserAuth> userAuthCaptor = ArgumentCaptor.forClass(UserAuth.class);
+
+        //when
+        userWriteService.emailAuth(1L,"인증키~");
+
+        //then
+        verify(userRepository,times(1)).save(userCaptor.capture());
+        User UserCaptorValue = userCaptor.getValue();
+        assertEquals(APPROVED,UserCaptorValue.getUserStatus());
+
+        verify(userAuthRepository,times(1)).delete(userAuthCaptor.capture());
     }
 }

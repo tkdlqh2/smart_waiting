@@ -1,7 +1,6 @@
 package com.example.smart_waiting.domain.user.service;
 
 import com.example.smart_waiting.domain.user.dto.UserInput;
-import com.example.smart_waiting.domain.user.type.UserStatus;
 import com.example.smart_waiting.domain.user.entity.User;
 import com.example.smart_waiting.domain.user.entity.UserAuth;
 import com.example.smart_waiting.domain.user.repository.UserAuthRepository;

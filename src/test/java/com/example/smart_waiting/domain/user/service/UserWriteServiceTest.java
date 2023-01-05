@@ -2,8 +2,6 @@ package com.example.smart_waiting.domain.user.service;
 
 import com.example.smart_waiting.domain.user.dto.UserInput;
 import com.example.smart_waiting.domain.user.entity.User;
-import com.example.smart_waiting.domain.user.entity.UserAuth;
-import com.example.smart_waiting.domain.user.repository.UserAuthRepository;
 import com.example.smart_waiting.domain.user.repository.UserRepository;
 import com.example.smart_waiting.exception.NoErrorException;
 import org.junit.jupiter.api.Test;
@@ -32,8 +30,6 @@ class UserWriteServiceTest {
     private PasswordEncoder passwordEncoder;
     @Mock
     private UserRepository userRepository;
-    @Mock
-    private UserAuthRepository userAuthRepository;
     @InjectMocks
     private UserWriteService userWriteService;
 
@@ -110,15 +106,14 @@ class UserWriteServiceTest {
     @Test
     void emailAuthSuccess(){
         //given
-        given(userAuthRepository.findByUserId(1L))
-                .willReturn(Optional.of(UserAuth.builder()
-                                .userId(1L)
-                        .string("인증키~")
-                        .expiredTime(LocalDateTime.now().plusDays(1))
+        given(userRepository.findById(1L))
+                .willReturn(Optional.of(User.builder()
+                        .id(1L)
+                        .authKey("인증키~")
+                        .expireDateTime(LocalDateTime.now().plusDays(1))
                         .build()));
 
         ArgumentCaptor<User> userCaptor = ArgumentCaptor.forClass(User.class);
-        ArgumentCaptor<UserAuth> userAuthCaptor = ArgumentCaptor.forClass(UserAuth.class);
 
         //when
         userWriteService.emailAuth(1L,"인증키~");
@@ -127,7 +122,5 @@ class UserWriteServiceTest {
         verify(userRepository,times(1)).save(userCaptor.capture());
         User UserCaptorValue = userCaptor.getValue();
         assertEquals(APPROVED,UserCaptorValue.getUserStatus());
-
-        verify(userAuthRepository,times(1)).delete(userAuthCaptor.capture());
     }
 }

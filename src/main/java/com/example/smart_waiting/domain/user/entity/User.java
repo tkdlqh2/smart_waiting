@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Getter
 @NoArgsConstructor
@@ -31,4 +32,10 @@ public class User {
     private String phone;
     @Enumerated(EnumType.STRING)
     private UserStatus userStatus;
+    private String authKey;
+    private LocalDateTime expireDateTime;
+
+    public void approve(){
+        this.userStatus = UserStatus.APPROVED;
+    }
 }

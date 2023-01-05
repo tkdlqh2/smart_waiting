@@ -37,4 +37,9 @@ public class UserController {
         return ResponseEntity.ok(userReadService.existPhone(phone));
     }
 
+    @GetMapping("/{userId}/auth/{authKey}")
+    public ResponseEntity<String> emailAuth(@PathVariable Long userId, @PathVariable String authKey){
+        userWriteService.emailAuth(userId,authKey);
+        return ResponseEntity.ok("회원 인증이 완료되었습니다.");
+    }
 }

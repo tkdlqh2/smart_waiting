@@ -2,9 +2,7 @@ package com.example.smart_waiting.application.controller;
 
 import com.example.smart_waiting.domain.user.dto.UserInput;
 import com.example.smart_waiting.domain.user.service.UserWriteService;
-import com.example.smart_waiting.exception.UserErrorCode;
 import com.example.smart_waiting.exception.UserException;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,6 +72,7 @@ class UserControllerTest {
                                         .build()
                         )))
                 .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.errorMessage").value(EMAIL_ALREADY_EXIST.getMessage()))
                 .andDo(print());
     }
 }

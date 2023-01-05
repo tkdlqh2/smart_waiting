@@ -35,6 +35,8 @@ public class UserWriteService {
                 .build();
 
         userRepository.save(user);
+
+        //인증 메일 발송 처리 -> 카프카
     }
 
 }

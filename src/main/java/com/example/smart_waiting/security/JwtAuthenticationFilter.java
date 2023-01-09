@@ -1,7 +1,6 @@
 package com.example.smart_waiting.security;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -13,10 +12,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+@Slf4j
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-    private final Logger logger1 = LoggerFactory.getLogger(JwtAuthenticationFilter.class);
     private final JwtTokenProvider jwtTokenProvider;
 
     public JwtAuthenticationFilter(JwtTokenProvider jwtTokenProvider) {
@@ -28,9 +27,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                     FilterChain filterChain) throws ServletException, IOException {
 
         String token = jwtTokenProvider.resolveToken(request);
-        logger1.info("[doFilterInternal] token 값 추출 완료. token : {}",token);
+        log.info("[doFilterInternal] token 값 추출 완료. token : {}",token);
 
-        logger1.info("[doFilterInternal] token 값 유효성 체크 시작. token : {}",token);
+        log.info("[doFilterInternal] token 값 유효성 체크 시작. token : {}",token);
         if(token != null && jwtTokenProvider.validateToken(token)){
             Authentication authentication = jwtTokenProvider.getAuthentication(token);
             SecurityContextHolder.getContext().setAuthentication(authentication);

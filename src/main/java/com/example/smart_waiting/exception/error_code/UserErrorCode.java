@@ -1,4 +1,4 @@
-package com.example.smart_waiting.exception;
+package com.example.smart_waiting.exception.error_code;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

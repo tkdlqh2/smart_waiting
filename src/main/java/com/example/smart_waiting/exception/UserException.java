@@ -1,5 +1,6 @@
 package com.example.smart_waiting.exception;
 
+import com.example.smart_waiting.exception.error_code.UserErrorCode;
 import lombok.Getter;
 
 @Getter

@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 import static com.example.smart_waiting.domain.user.type.UserStatus.UNAPPROVED;
-import static com.example.smart_waiting.exception.UserErrorCode.*;
+import static com.example.smart_waiting.exception.error_code.UserErrorCode.*;
 
 @RequiredArgsConstructor
 @Service

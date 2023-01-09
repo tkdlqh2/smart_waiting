@@ -1,4 +1,4 @@
-package com.example.smart_waiting.util;
+package com.example.smart_waiting.security;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;

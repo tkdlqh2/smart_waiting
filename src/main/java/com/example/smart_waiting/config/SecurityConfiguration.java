@@ -1,5 +1,7 @@
 package com.example.smart_waiting.config;
 
+import com.example.smart_waiting.exception.CustomAccessDeniedHandler;
+import com.example.smart_waiting.exception.CustomAuthenticationEntryPoint;
 import com.example.smart_waiting.security.JwtAuthenticationFilter;
 import com.example.smart_waiting.security.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +25,8 @@ public class SecurityConfiguration{
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and().authorizeRequests()
                 .antMatchers("/api/v1/user/**").permitAll()
+                .and().exceptionHandling().accessDeniedHandler(new CustomAccessDeniedHandler())
+                .and().exceptionHandling().authenticationEntryPoint(new CustomAuthenticationEntryPoint())
                 .and()
                 .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider)
                         , UsernamePasswordAuthenticationFilter.class);

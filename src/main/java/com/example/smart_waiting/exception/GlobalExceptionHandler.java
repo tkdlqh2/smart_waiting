@@ -40,4 +40,10 @@ public class GlobalExceptionHandler {
         GlobalErrorResult result = GlobalErrorResult.of(e.getMessage());
         return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(SecurityException.class)
+    public ResponseEntity<GlobalErrorResult> accessDeniedExceptionHandler(SecurityException e){
+        GlobalErrorResult result = GlobalErrorResult.of(e.getMessage());
+        return new ResponseEntity<>(result, e.getErrorCode().getHttpStatus());
+    }
 }

@@ -1,5 +1,6 @@
-package com.example.smart_waiting.exception;
+package com.example.smart_waiting.security;
 
+import com.example.smart_waiting.exception.exception_class.SecurityException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;

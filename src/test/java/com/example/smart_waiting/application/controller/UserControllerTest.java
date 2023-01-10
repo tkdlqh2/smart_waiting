@@ -4,7 +4,7 @@ import com.example.smart_waiting.domain.user.dto.UserInput;
 import com.example.smart_waiting.domain.user.dto.UserLogInInput;
 import com.example.smart_waiting.domain.user.service.UserReadService;
 import com.example.smart_waiting.domain.user.service.UserWriteService;
-import com.example.smart_waiting.exception.UserException;
+import com.example.smart_waiting.exception.exception_class.UserException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,7 +1,7 @@
 package com.example.smart_waiting.config;
 
-import com.example.smart_waiting.exception.CustomAccessDeniedHandler;
-import com.example.smart_waiting.exception.CustomAuthenticationEntryPoint;
+import com.example.smart_waiting.security.CustomAccessDeniedHandler;
+import com.example.smart_waiting.security.CustomAuthenticationEntryPoint;
 import com.example.smart_waiting.security.JwtAuthenticationFilter;
 import com.example.smart_waiting.security.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;

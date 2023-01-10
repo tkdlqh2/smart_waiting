@@ -5,6 +5,7 @@ import com.example.smart_waiting.domain.user.dto.UserLogInInput;
 import com.example.smart_waiting.domain.user.service.UserReadService;
 import com.example.smart_waiting.domain.user.service.UserWriteService;
 import com.example.smart_waiting.exception.exception_class.UserException;
+import com.example.smart_waiting.security.JwtTokenProvider;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +29,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(UserController.class)
 @AutoConfigureMockMvc(addFilters = false)
 @MockBean(JpaMetamodelMappingContext.class)
+@MockBean(JwtTokenProvider.class)
 class UserControllerTest {
 
     @MockBean

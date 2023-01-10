@@ -3,6 +3,7 @@ package com.example.smart_waiting.application.controller;
 import com.example.smart_waiting.domain.market.dto.MarketInput;
 import com.example.smart_waiting.domain.market.service.MarketWriteService;
 import com.example.smart_waiting.exception.exception_class.MarketException;
+import com.example.smart_waiting.security.JwtTokenProvider;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(MarketController.class)
 @AutoConfigureMockMvc(addFilters = false)
 @MockBean(JpaMetamodelMappingContext.class)
+@MockBean(JwtTokenProvider.class)
 class MarketControllerTest {
 
     @MockBean

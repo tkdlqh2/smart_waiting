@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 
 import static com.example.smart_waiting.domain.user.type.UserStatus.APPROVED;
-import static com.example.smart_waiting.exception.UserErrorCode.*;
+import static com.example.smart_waiting.exception.error_code.UserErrorCode.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;

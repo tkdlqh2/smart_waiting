@@ -5,16 +5,19 @@ import com.example.smart_waiting.domain.user.entity.User;
 import com.example.smart_waiting.domain.user.repository.UserRepository;
 import com.example.smart_waiting.exception.UserException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.UUID;
 
 import static com.example.smart_waiting.domain.user.type.UserStatus.UNAPPROVED;
-import static com.example.smart_waiting.exception.UserErrorCode.*;
+import static com.example.smart_waiting.exception.error_code.UserErrorCode.*;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class UserWriteService {
@@ -41,6 +44,7 @@ public class UserWriteService {
                 .userStatus(UNAPPROVED)
                 .authKey(UUID.randomUUID().toString())
                 .expireDateTime(LocalDateTime.now().plusDays(EXPIRE_DAY))
+                .roles(Collections.singletonList("ROLE_USER"))
                 .build());
         //인증 메일 발송 처리 -> 카프카
     }

@@ -2,12 +2,15 @@ package com.example.smart_waiting.domain.market.entity;
 
 import com.example.smart_waiting.domain.base.BaseEntity;
 import com.example.smart_waiting.domain.market.dto.MarketInput;
+import com.example.smart_waiting.domain.market.type.MarketStatus;
 import com.example.smart_waiting.domain.user.entity.User;
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+
+import static com.example.smart_waiting.domain.market.type.MarketStatus.UNAPPROVED;
 
 @Getter
 @SuperBuilder
@@ -35,6 +38,9 @@ public class Market extends BaseEntity {
     @Column(nullable = false)
     private Long closeHour;
 
+    @Enumerated(EnumType.STRING)
+    private MarketStatus status;
+
     public Market(){
         super(LocalDateTime.now(),null);
     }
@@ -47,5 +53,6 @@ public class Market extends BaseEntity {
         this.detailAddress = parameter.getDetailAddress();
         this.openHour = parameter.getOpenHour();
         this.closeHour = parameter.getCloseHour();
+        this.status = UNAPPROVED;
     }
 }

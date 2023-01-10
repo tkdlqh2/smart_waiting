@@ -1,6 +1,7 @@
 package com.example.smart_waiting.application.controller;
 
 import com.example.smart_waiting.domain.user.dto.UserInput;
+import com.example.smart_waiting.domain.user.dto.UserLogInInput;
 import com.example.smart_waiting.domain.user.service.UserReadService;
 import com.example.smart_waiting.domain.user.service.UserWriteService;
 import lombok.RequiredArgsConstructor;
@@ -41,5 +42,11 @@ public class UserController {
     public ResponseEntity<String> emailAuth(@PathVariable Long userId, @PathVariable String authKey){
         userWriteService.emailAuth(userId,authKey);
         return ResponseEntity.ok("회원 인증이 완료되었습니다.");
+    }
+
+    @GetMapping("/sign-in")
+    public ResponseEntity<String> signIn(@RequestBody UserLogInInput parameter){
+        String token = userReadService.signIn(parameter);
+        return ResponseEntity.ok(token);
     }
 }

@@ -1,19 +1,17 @@
 package com.example.smart_waiting.domain.market.entity;
 
+import com.example.smart_waiting.domain.base.BaseEntity;
 import com.example.smart_waiting.domain.user.entity.User;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Getter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
+@SuperBuilder
 @Entity
-public class Market {
+public class Market extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,4 +33,8 @@ public class Market {
     private Long openHour;
     @Column(nullable = false)
     private Long closeHour;
+
+    public Market(){
+        super(LocalDateTime.now(),null);
+    }
 }

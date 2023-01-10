@@ -1,10 +1,10 @@
 package com.example.smart_waiting.domain.user.entity;
 
+import com.example.smart_waiting.domain.base.BaseEntity;
 import com.example.smart_waiting.domain.user.type.UserStatus;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -20,11 +20,9 @@ import static com.example.smart_waiting.domain.user.type.UserStatus.APPROVED;
 import static com.example.smart_waiting.domain.user.type.UserStatus.STOPPED;
 
 @Getter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
+@SuperBuilder
 @Entity
-public class User implements UserDetails {
+public class User extends BaseEntity implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -47,6 +45,10 @@ public class User implements UserDetails {
     @ElementCollection(fetch = FetchType.EAGER)
     @Builder.Default
     private List<String> roles = new ArrayList<>();
+
+    public User(){
+        super(LocalDateTime.now(),null);
+    }
 
     public void approve(){
         this.userStatus = APPROVED;

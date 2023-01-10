@@ -7,9 +7,6 @@ import com.example.smart_waiting.exception.UserException;
 import com.example.smart_waiting.security.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,7 +17,7 @@ import static com.example.smart_waiting.exception.error_code.UserErrorCode.USER_
 @Slf4j
 @RequiredArgsConstructor
 @Service
-public class UserReadService implements UserDetailsService {
+public class UserReadService{
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
@@ -32,11 +29,7 @@ public class UserReadService implements UserDetailsService {
     @Transactional(readOnly = true)
     public boolean existPhone (String phone) {return userRepository.existsByPhone(phone);}
 
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return userRepository.findByEmail(username)
-                .orElseThrow(() -> new UsernameNotFoundException(username+"을 찾을 수 없습니다."));
-    }
+
 
     @Transactional(readOnly = true)
     public String signIn(UserLogInInput parameter) throws UserException {

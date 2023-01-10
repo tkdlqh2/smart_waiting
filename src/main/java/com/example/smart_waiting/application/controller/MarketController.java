@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
 import java.security.Principal;
 
 @RequiredArgsConstructor
@@ -20,7 +21,7 @@ public class MarketController {
     private final MarketWriteService marketWriteService;
 
     @PostMapping("/register")
-    public ResponseEntity<String> register(Principal principal, @RequestBody MarketInput input){
+    public ResponseEntity<String> register(Principal principal, @Valid @RequestBody MarketInput input){
         var user = (User) principal;
         marketWriteService.register(user, input);
         return ResponseEntity.ok("음식점 등록이 완료되었습니다.");

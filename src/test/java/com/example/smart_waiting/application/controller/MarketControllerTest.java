@@ -55,4 +55,46 @@ class MarketControllerTest {
                 .andExpect(jsonPath("$").value("음식점 등록이 완료되었습니다."))
                 .andDo(print());
     }
+
+    @Test
+    void registerFail_alreadyMarketHaveUser() throws Exception {
+
+        doThrow(new MarketException(ALREADY_HAVE_MARKET)).when(marketWriteService).register(any(),any());
+
+        mockMvc.perform(post("/api/v1/market/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(
+                                MarketInput.builder()
+                                        .name("맛있는 음식점 1")
+                                        .registrationNum("000-11-22222")
+                                        .zipCode(11111L)
+                                        .detailAddress("상세주소입니다")
+                                        .openHour(1L)
+                                        .closeHour(14L)
+                                        .build()
+                        )))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.errorMessage").value(ALREADY_HAVE_MARKET.getMessage()))
+                .andDo(print());
+    }
+    @Test
+    void registerFail_invalidInput() throws Exception {
+
+        doNothing().when(marketWriteService).register(any(),any());
+
+        mockMvc.perform(post("/api/v1/market/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(
+                                MarketInput.builder()
+                                        .name("맛있는 음식점 1")
+                                        .registrationNum("")
+                                        .zipCode(11111L)
+                                        .detailAddress("상세주소입니다")
+                                        .openHour(1L)
+                                        .closeHour(25L)
+                                        .build()
+                        )))
+                .andExpect(status().isBadRequest())
+                .andDo(print());
+    }
 }

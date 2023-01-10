@@ -1,6 +1,7 @@
 package com.example.smart_waiting.domain.market.entity;
 
 import com.example.smart_waiting.domain.base.BaseEntity;
+import com.example.smart_waiting.domain.market.dto.MarketInput;
 import com.example.smart_waiting.domain.user.entity.User;
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;
@@ -36,5 +37,15 @@ public class Market extends BaseEntity {
 
     public Market(){
         super(LocalDateTime.now(),null);
+    }
+
+    public Market(User user, MarketInput parameter){
+        this.owner = user;
+        this.name = parameter.getName();
+        this.registrationNum = parameter.getRegistrationNum();
+        this.zipCode = parameter.getZipCode();
+        this.detailAddress = parameter.getDetailAddress();
+        this.openHour = parameter.getOpenHour();
+        this.closeHour = parameter.getCloseHour();
     }
 }

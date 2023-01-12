@@ -1,5 +1,6 @@
 package com.example.smart_waiting.domain.market.service;
 
+import com.example.smart_waiting.domain.market.dto.MarketFilter;
 import com.example.smart_waiting.domain.market.dto.MarketInput;
 import com.example.smart_waiting.domain.market.entity.Market;
 import com.example.smart_waiting.domain.market.repository.MarketRepository;
@@ -11,6 +12,8 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.BDDMockito.given;
@@ -25,25 +28,24 @@ class MarketReadServiceTest {
     private MarketRepository marketRepository;
 
     @InjectMocks
-    private MarketWriteService marketReadService;
+    private MarketReadService marketReadService;
 
     @Test
     void getMarketsByFilterSuccess(){
         //given
-        MarketFilter marketFliter = MarketFilter.builder()
-                                    .rcate1()
-                                    .rcate2()
-                                    .foodType()
-                                    .isParkAble()
+        MarketFilter marketFilter = MarketFilter.builder()
+                                    .rcate2s(Collections.singletonList("강남구"))
+                                    .foodTypes(Collections.EMPTY_LIST)
+                                    .noParkingLotOk(true)
                                     .build();
 
         CursorRequest request= new CursorRequest(10L,10);
 
         ArgumentCaptor<Market> captor = ArgumentCaptor.forClass(Market.class);
-        given(marketRepository.getMarkets(marketFliter, request)).willReturn();
+        given(marketRepository.findAllBy(marketFilter, request)).willReturn();
 
         //when
-        marketWriteService.getMarketsByFilter(marketFliter);
+        marketReadService.getMarketsByFilter(marketFilter,request);
 
         //then
         verify(marketRepository,times(1)).save(captor.capture());

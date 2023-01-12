@@ -5,13 +5,14 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class MarketFilter {
-    private String rcate1;
-    private String rcate2;
-    private FoodType foodType;
+    private List<String> rcate2s;
+    private List<FoodType> foodTypes;
     private boolean noParkingLotOk;
 
 }

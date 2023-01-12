@@ -2,13 +2,17 @@ package com.example.smart_waiting.domain.market.entity;
 
 import com.example.smart_waiting.domain.base.BaseEntity;
 import com.example.smart_waiting.domain.market.dto.MarketInput;
+import com.example.smart_waiting.domain.market.type.FoodType;
 import com.example.smart_waiting.domain.market.type.MarketStatus;
+import com.example.smart_waiting.domain.market.type.ParkType;
+import com.example.smart_waiting.domain.market.type.WeekDay;
 import com.example.smart_waiting.domain.user.entity.User;
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static com.example.smart_waiting.domain.market.type.MarketStatus.UNAPPROVED;
 
@@ -37,9 +41,16 @@ public class Market extends BaseEntity {
     private Long openHour;
     @Column(nullable = false)
     private Long closeHour;
+    @ElementCollection(targetClass = WeekDay.class)
+    @Enumerated(EnumType.STRING)
+    private List<WeekDay> dayOffs;
 
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private MarketStatus status;
+
+    private FoodType foodType;
+    private ParkType parkType;
 
     public Market(){
         super(LocalDateTime.now(),null);

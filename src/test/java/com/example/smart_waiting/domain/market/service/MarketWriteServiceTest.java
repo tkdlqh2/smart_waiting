@@ -38,7 +38,8 @@ class MarketWriteServiceTest {
         MarketInput marketInput = MarketInput.builder()
                 .name("행복한 식당1")
                 .registrationNum("12345344")
-                .zipCode(15484L)
+                .rcate1("경기도 안산시")
+                .rcate2("단원구")
                 .detailAddress("xxx 건물 xxx 층 xx호")
                 .openHour(7L)
                 .closeHour(14L)
@@ -56,7 +57,8 @@ class MarketWriteServiceTest {
         assertEquals(1L,capturedMarket.getOwner().getId());
         assertEquals("행복한 식당1",capturedMarket.getName());
         assertEquals("12345344",capturedMarket.getRegistrationNum());
-        assertEquals(15484L,capturedMarket.getZipCode());
+        assertEquals("경기도 안산시",capturedMarket.getRcate1());
+        assertEquals("단원구",capturedMarket.getRcate2());
         assertEquals("xxx 건물 xxx 층 xx호",capturedMarket.getDetailAddress());
         assertEquals(7L,capturedMarket.getOpenHour());
         assertEquals(14L,capturedMarket.getCloseHour());

@@ -14,7 +14,7 @@ public class CursorRequest {
 
     public static final Long NONE_KEY = -1L;
 
-    public Boolean hasKey() {
+    public boolean hasKey() {
         return key != null && !key.equals(NONE_KEY);
     }
 

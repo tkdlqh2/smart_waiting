@@ -12,7 +12,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -49,7 +48,7 @@ public class MarketRepositoryCustomImpl extends QuerydslRepositorySupport implem
             }
         }
 
-        if(request.hasKey()){
+        if(Boolean.TRUE.equals(request.hasKey())){
             builder.and(market.id.lt(request.getKey()));
         }
 
@@ -61,7 +60,7 @@ public class MarketRepositoryCustomImpl extends QuerydslRepositorySupport implem
 
         Long lastKey = getLastKey(body);
 
-        return new PageCursor<>(new CursorRequest(lastKey, request.getSize()),body);
+        return new PageCursor<>(request.next(lastKey),body);
     }
 
     private long getLastKey(List<Market> body) {

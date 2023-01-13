@@ -43,6 +43,8 @@ dependencies {
 			"javax.persistence:javax.persistence-api",
 			"javax.annotation:javax.annotation-api",
 			"com.querydsl:querydsl-apt:${queryDslVersion}:jpa")
+
+	testImplementation 'org.jeasy:easy-random-core:5.0.0'
 }
 
 // QueryDSL

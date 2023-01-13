@@ -34,7 +34,9 @@ public class Market extends BaseEntity {
     @Column(nullable = false)
     private String registrationNum;
     @Column(nullable = false)
-    private Long zipCode;
+    private String rcate1;
+    @Column(nullable = false)
+    private String rcate2;
     @Column(nullable = false)
     private String detailAddress;
     @Column(nullable = false)
@@ -60,7 +62,8 @@ public class Market extends BaseEntity {
         this.owner = user;
         this.name = parameter.getName();
         this.registrationNum = parameter.getRegistrationNum();
-        this.zipCode = parameter.getZipCode();
+        this.rcate1 = parameter.getRcate1();
+        this.rcate2 = parameter.getRcate2();
         this.detailAddress = parameter.getDetailAddress();
         this.openHour = parameter.getOpenHour();
         this.closeHour = parameter.getCloseHour();

@@ -16,9 +16,10 @@ public class MarketInput {
     private String name;
     @Pattern(regexp = "^\\d{3}-\\d{2}-\\d{5}$")
     private String registrationNum;
-    @Min(10000)
-    @Max(99999)
-    private Long zipCode;
+    @NotBlank
+    private String rcate1;
+    @NotBlank
+    private String rcate2;
     @NotBlank
     @Size(max = 50)
     private String detailAddress;

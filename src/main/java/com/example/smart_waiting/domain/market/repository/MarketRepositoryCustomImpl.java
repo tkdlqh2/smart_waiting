@@ -1,5 +1,6 @@
 package com.example.smart_waiting.domain.market.repository;
 
+import com.example.smart_waiting.domain.market.dto.MarketDto;
 import com.example.smart_waiting.domain.market.dto.MarketFilter;
 import com.example.smart_waiting.domain.market.entity.Market;
 import com.example.smart_waiting.domain.market.entity.QMarket;
@@ -7,6 +8,7 @@ import com.example.smart_waiting.domain.market.type.ParkType;
 import com.example.smart_waiting.util.CursorRequest;
 import com.example.smart_waiting.util.PageCursor;
 import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.Projections;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
@@ -24,10 +26,10 @@ public class MarketRepositoryCustomImpl extends QuerydslRepositorySupport implem
     }
 
     @Override
-    public PageCursor<Market> findByFilter(MarketFilter filter, CursorRequest request) {
+    public PageCursor<MarketDto> findByFilter(MarketFilter filter, CursorRequest request) {
 
         QMarket market = QMarket.market;
-        List<Market> body;
+        List<MarketDto> body;
         BooleanBuilder builder = new BooleanBuilder();
 
         if(!ObjectUtils.isEmpty(filter)){
@@ -53,6 +55,8 @@ public class MarketRepositoryCustomImpl extends QuerydslRepositorySupport implem
         }
 
         body = from(market)
+                .select(Projections.fields(MarketDto.class,
+                        market.name,market.rcate2,market.foodType))
                 .where(builder)
                 .limit(request.getSize())
                 .orderBy(market.id.desc())
@@ -63,7 +67,7 @@ public class MarketRepositoryCustomImpl extends QuerydslRepositorySupport implem
         return new PageCursor<>(request.next(lastKey),body);
     }
 
-    private long getLastKey(List<Market> body) {
-        return body.stream().mapToLong(Market::getId).max().orElse(CursorRequest.NONE_KEY);
+    private long getLastKey(List<MarketDto> body) {
+        return body.stream().mapToLong(MarketDto::getId).max().orElse(CursorRequest.NONE_KEY);
     }
 }

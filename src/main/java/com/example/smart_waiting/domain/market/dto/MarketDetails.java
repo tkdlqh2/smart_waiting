@@ -2,14 +2,10 @@ package com.example.smart_waiting.domain.market.dto;
 
 
 import com.example.smart_waiting.domain.market.entity.Market;
-import com.example.smart_waiting.domain.market.type.FoodType;
-import com.example.smart_waiting.domain.market.type.ParkType;
 import com.example.smart_waiting.domain.market.type.WeekDay;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-
-import java.util.List;
 
 @Getter
 @Builder
@@ -22,9 +18,9 @@ public class MarketDetails {
     private final String detailAddress;
     private final Long openHour;
     private final Long closeHour;
-    private final List<WeekDay> dayOffs;
-    private final FoodType foodType;
-    private final ParkType parkType;
+    private final String dayOffs;
+    private final String foodType;
+    private final String parkType;
 
     public static MarketDetails of(Market market){
         return MarketDetails.builder()
@@ -34,8 +30,8 @@ public class MarketDetails {
                 .detailAddress(market.getDetailAddress())
                 .openHour(market.getOpenHour())
                 .closeHour(market.getCloseHour())
-                .dayOffs(market.getDayOffs())
-                .foodType(market.getFoodType())
-                .parkType(market.getParkType()).build();
+                .dayOffs(market.getDayOffs().stream().map(WeekDay::getMsg).reduce((x, y) -> x+","+y).orElse(""))
+                .foodType(market.getFoodType().getMsg())
+                .parkType(market.getParkType().getMsg()).build();
     }
 }

@@ -12,7 +12,7 @@ import lombok.experimental.SuperBuilder;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.Set;
 
 import static com.example.smart_waiting.domain.market.type.MarketStatus.UNAPPROVED;
 
@@ -45,7 +45,7 @@ public class Market extends BaseEntity {
     private Long closeHour;
     @ElementCollection(targetClass = WeekDay.class)
     @Enumerated(EnumType.STRING)
-    private List<WeekDay> dayOffs;
+    private Set<WeekDay> dayOffs;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)

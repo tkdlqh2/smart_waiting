@@ -1,5 +1,6 @@
 package com.example.smart_waiting.application.controller;
 
+import com.example.smart_waiting.domain.market.dto.MarketDetails;
 import com.example.smart_waiting.domain.market.dto.MarketDto;
 import com.example.smart_waiting.domain.market.dto.MarketFilter;
 import com.example.smart_waiting.domain.market.dto.MarketInput;
@@ -141,6 +142,28 @@ class MarketControllerTest {
                                 .noParkingLotOk(false)
                                 .build())))
                 .andExpect(status().isOk())
+                .andDo(print());
+    }
+
+    @Test
+    void getMarketDetailsSuccess() throws Exception {
+        //given
+        MarketDetails marketDetails = MarketDetails.of(MarketsFixtureFactory.create());
+        given(marketReadService.getMarketDetails(1L))
+                .willReturn(marketDetails);
+        //when
+        //then
+        mockMvc.perform(get("/api/v1/market/details/1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.name").value(marketDetails.getName()))
+                .andExpect(jsonPath("$.rcate1").value(marketDetails.getRcate1()))
+                .andExpect(jsonPath("$.rcate2").value(marketDetails.getRcate2()))
+                .andExpect(jsonPath("$.detailAddress").value(marketDetails.getDetailAddress()))
+                .andExpect(jsonPath("$.openHour").value(marketDetails.getOpenHour()))
+                .andExpect(jsonPath("$.closeHour").value(marketDetails.getCloseHour()))
+                .andExpect(jsonPath("$.dayOffs").value(marketDetails.getDayOffs()))
+                .andExpect(jsonPath("$.foodType").value(marketDetails.getFoodType()))
+                .andExpect(jsonPath("$.parkType").value(marketDetails.getParkType()))
                 .andDo(print());
     }
 }

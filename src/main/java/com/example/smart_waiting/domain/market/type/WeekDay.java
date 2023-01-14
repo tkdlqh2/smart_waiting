@@ -1,7 +1,9 @@
 package com.example.smart_waiting.domain.market.type;
 
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 
+@Getter
 @AllArgsConstructor
 public enum WeekDay {
 

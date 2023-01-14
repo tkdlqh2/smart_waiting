@@ -2,6 +2,7 @@ package com.example.smart_waiting.domain.market.entity;
 
 import com.example.smart_waiting.domain.base.BaseEntity;
 import com.example.smart_waiting.domain.market.dto.MarketInput;
+import com.example.smart_waiting.domain.market.dto.MarketUpdateInput;
 import com.example.smart_waiting.domain.market.type.FoodType;
 import com.example.smart_waiting.domain.market.type.MarketStatus;
 import com.example.smart_waiting.domain.market.type.ParkType;
@@ -68,5 +69,12 @@ public class Market extends BaseEntity {
         this.openHour = parameter.getOpenHour();
         this.closeHour = parameter.getCloseHour();
         this.status = UNAPPROVED;
+    }
+
+    public void update(MarketUpdateInput parameter) {
+        this.openHour = parameter.getOpenHour();
+        this.closeHour = parameter.getCloseHour();
+        this.dayOffs = parameter.getDayOffs();
+        this.parkType = parameter.getParkType();
     }
 }

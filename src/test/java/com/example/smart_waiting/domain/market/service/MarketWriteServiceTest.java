@@ -192,41 +192,65 @@ class MarketWriteServiceTest {
         }
     }
 
-//    @Test
-//    void deleteMarketSuccess(){
-//        //given
-//
-//        User ownerUser = User.builder()
-//                .id(1L)
-//                .build();
-//
-//        MarketInput marketInput = MarketInput.builder()
-//                .name("행복한 식당1")
-//                .registrationNum("12345344")
-//                .rcate1("경기도 안산시")
-//                .rcate2("단원구")
-//                .detailAddress("xxx 건물 xxx 층 xx호")
-//                .openHour(7L)
-//                .closeHour(14L)
-//                .build();
-//
-//        ArgumentCaptor<Market> captor = ArgumentCaptor.forClass(Market.class);
-//        given(marketRepository.existsByOwner(ownerUser)).willReturn(false);
-//
-//        //when
-//        marketWriteService.register(ownerUser,marketInput);
-//
-//        //then
-//        verify(marketRepository,times(1)).save(captor.capture());
-//        var capturedMarket = captor.getValue();
-//        assertEquals(1L,capturedMarket.getOwner().getId());
-//        assertEquals("행복한 식당1",capturedMarket.getName());
-//        assertEquals("12345344",capturedMarket.getRegistrationNum());
-//        assertEquals("경기도 안산시",capturedMarket.getRcate1());
-//        assertEquals("단원구",capturedMarket.getRcate2());
-//        assertEquals("xxx 건물 xxx 층 xx호",capturedMarket.getDetailAddress());
-//        assertEquals(7L,capturedMarket.getOpenHour());
-//        assertEquals(14L,capturedMarket.getCloseHour());
-//    }
+    @Test
+    void deleteMarketSuccess(){
+        //given
+
+        User ownerUser = User.builder()
+                .id(1L)
+                .build();
+
+        ArgumentCaptor<Market> captor = ArgumentCaptor.forClass(Market.class);
+        Market createdMarket = MarketsFixtureFactory.create();
+        createdMarket.setStatus(MarketStatus.APPROVED);
+        given(marketRepository.findByOwner(ownerUser)).willReturn(Optional.of(createdMarket));
+
+        //when
+        marketWriteService.deleteMarket(ownerUser);
+
+        //then
+        verify(marketRepository,times(1)).save(captor.capture());
+        var capturedMarket = captor.getValue();
+        assertEquals(MarketStatus.STOPPED,capturedMarket.getStatus());
+    }
+    @Test
+    void deleteMarketFail_marketNotFound(){
+        //given
+
+        User ownerUser = User.builder()
+                .id(1L)
+                .build();
+
+        given(marketRepository.findByOwner(ownerUser)).willReturn(Optional.empty());
+
+        //when
+        //then
+        try{
+            marketWriteService.deleteMarket(ownerUser);
+        } catch (Exception e){
+            assertEquals(MARKET_NOT_FOUND.getMessage(), e.getMessage());
+        }
+    }
+
+    @Test
+    void deleteMarketFail_statusIsNotApproved(){
+        //given
+
+        User ownerUser = User.builder()
+                .id(1L)
+                .build();
+
+        Market createdMarket = MarketsFixtureFactory.create();
+        createdMarket.setStatus(MarketStatus.UNAPPROVED);
+        given(marketRepository.findByOwner(ownerUser)).willReturn(Optional.of(createdMarket));
+
+        //when
+        //then
+        try{
+            marketWriteService.deleteMarket(ownerUser);
+        } catch (Exception e){
+            assertEquals(MARKET_STATUS_IS_NOT_APPROVED.getMessage(), e.getMessage());
+        }
+    }
 
 }

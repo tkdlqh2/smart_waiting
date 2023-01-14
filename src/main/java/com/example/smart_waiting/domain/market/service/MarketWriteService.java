@@ -35,4 +35,16 @@ public class MarketWriteService {
         market.update(parameter);
         marketRepository.save(market);
     }
+
+    @Transactional
+    public void deleteMarket(User user) {
+        Market market = marketRepository.findByOwner(user)
+                .orElseThrow(() -> new MarketException(MARKET_NOT_FOUND));
+
+        if(!market.getStatus().equals(MarketStatus.APPROVED)){
+            throw new MarketException(MARKET_STATUS_IS_NOT_APPROVED);}
+
+        market.setStatus(MarketStatus.STOPPED);
+        marketRepository.save(market);
+    }
 }

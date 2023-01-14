@@ -1,9 +1,12 @@
 package com.example.smart_waiting.factory;
 
 import com.example.smart_waiting.domain.market.entity.Market;
+import com.example.smart_waiting.domain.market.type.FoodType;
 import org.jeasy.random.EasyRandom;
 import org.jeasy.random.EasyRandomParameters;
+import org.jeasy.random.randomizers.misc.EnumRandomizer;
 import org.jeasy.random.randomizers.range.LongRangeRandomizer;
+import org.jeasy.random.randomizers.text.StringRandomizer;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -14,8 +17,10 @@ public class MarketsFixtureFactory {
 
     public static Market create() {
         var parameter = new EasyRandomParameters()
+                .randomize(String.class, new StringRandomizer())
                 .stringLengthRange(1, 10)
-                .randomize(Long.class, new LongRangeRandomizer(1L, 100L));
+                .randomize(Long.class, new LongRangeRandomizer(1L, 100L))
+                .randomize(FoodType.class, new EnumRandomizer<>(FoodType.class));
         return new EasyRandom(parameter).nextObject(Market.class);
     }
 

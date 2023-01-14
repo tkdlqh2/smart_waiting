@@ -1,10 +1,7 @@
 package com.example.smart_waiting.application.controller;
 
 import com.example.smart_waiting.application.usecase.RegisterMarketUserUsecase;
-import com.example.smart_waiting.domain.market.dto.MarketDetails;
-import com.example.smart_waiting.domain.market.dto.MarketDto;
-import com.example.smart_waiting.domain.market.dto.MarketFilter;
-import com.example.smart_waiting.domain.market.dto.MarketInput;
+import com.example.smart_waiting.domain.market.dto.*;
 import com.example.smart_waiting.domain.market.service.MarketReadService;
 import com.example.smart_waiting.domain.market.service.MarketWriteService;
 import com.example.smart_waiting.domain.user.entity.User;
@@ -30,7 +27,7 @@ public class MarketController {
     public ResponseEntity<String> register(Principal principal, @Valid @RequestBody MarketInput input){
         var user = (User) principal;
         registerMarketUserUsecase.register(user, input);
-        return ResponseEntity.ok("음식점 등록이 완료되었습니다.");
+        return ResponseEntity.ok("음식점 등록 신청이 완료되었습니다.");
     }
 
     @GetMapping("/list")
@@ -43,5 +40,12 @@ public class MarketController {
     @GetMapping("/details/{id}")
     public ResponseEntity<MarketDetails> getMarketDetails(@PathVariable Long id){
         return ResponseEntity.ok(marketReadService.getMarketDetails(id));
+    }
+
+    @PatchMapping("/update")
+    public ResponseEntity<String> updateMarket(Principal principal, @RequestBody MarketUpdateInput input){
+        var user = (User) principal;
+        marketWriteService.updateMarket(user, input);
+        return ResponseEntity.ok("음식점 변경이 완료되었습니다.");
     }
 }

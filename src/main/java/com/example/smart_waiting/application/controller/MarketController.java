@@ -32,8 +32,8 @@ public class MarketController {
 
     @GetMapping("/list")
     public ResponseEntity<PageCursor<MarketDto>> getMarketsByFilter(@RequestBody MarketFilter filter,
-                                                                    @RequestBody CursorRequest request){
-
+                                @RequestParam(required = false) Long key, @RequestParam int size){
+        CursorRequest request = new CursorRequest(key,size);
         return ResponseEntity.ok(marketReadService.getMarketsByFilter(filter,request));
     }
 

@@ -1,7 +1,9 @@
 package com.example.smart_waiting.domain.market.service;
 
+import com.example.smart_waiting.domain.market.dto.MarketDetails;
 import com.example.smart_waiting.domain.market.dto.MarketDto;
 import com.example.smart_waiting.domain.market.dto.MarketFilter;
+import com.example.smart_waiting.domain.market.entity.Market;
 import com.example.smart_waiting.domain.market.repository.MarketRepository;
 import com.example.smart_waiting.factory.MarketsFixtureFactory;
 import com.example.smart_waiting.util.CursorRequest;
@@ -15,6 +17,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -53,6 +56,25 @@ class MarketReadServiceTest {
         assertEquals(body,result.getBody());
         assertEquals(10L,result.getNextCursorRequest().getKey());
         assertEquals(20L,result.getNextCursorRequest().getSize());
+//        body.stream().forEach(x-> System.out.println(x.getRcate2()+" "+x.getId()+" "+x.getFoodType()+" "+x.getName()));
+    }
+
+    void getMarketDetailsSuccess(){
+        //given
+        Market createdMarket = MarketsFixtureFactory.create();
+        given(marketRepository.findById(1L)).willReturn(Optional.of(createdMarket));
+        //when
+        MarketDetails result = marketReadService.getMarketDetail(1L);
+        //then
+        assertEquals(createdMarket.getName(), result.getName());
+        assertEquals(createdMarket.getRcate1(), result.getRcate1());
+        assertEquals(createdMarket.getRcate2(), result.getRcate2());
+        assertEquals(createdMarket.getDetailAddress(), result.getDetailAddress());
+        assertEquals(createdMarket.getOpenHour(), result.getOpenHour());
+        assertEquals(createdMarket.getCloseHour(), result.getCloseHour());
+        assertEquals(createdMarket.getDayOffs(), result.getDayOffs());
+        assertEquals(createdMarket.getFoodType(), result.getFoodType());
+        assertEquals(createdMarket.getParkType(), result.getParkType());;
     }
 
 }

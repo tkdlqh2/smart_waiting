@@ -55,8 +55,8 @@ public class MarketRepositoryCustomImpl extends QuerydslRepositorySupport implem
         }
 
         body = from(market)
-                .select(Projections.fields(MarketDto.class,
-                        market.name,market.rcate2,market.foodType))
+                .select(Projections.constructor(MarketDto.class,
+                        market.id,market.name,market.rcate2,market.foodType))
                 .where(builder)
                 .limit(request.getSize())
                 .orderBy(market.id.desc())

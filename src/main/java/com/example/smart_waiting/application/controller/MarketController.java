@@ -48,4 +48,11 @@ public class MarketController {
         marketWriteService.updateMarket(user, input);
         return ResponseEntity.ok("음식점 변경이 완료되었습니다.");
     }
+
+    @DeleteMapping("/delete")
+    public ResponseEntity<String> deleteMarket(Principal principal){
+        var user = (User) principal;
+        marketWriteService.deleteMarket(user);
+        return ResponseEntity.ok("음식점 폐업이 완료되었습니다.");
+    }
 }

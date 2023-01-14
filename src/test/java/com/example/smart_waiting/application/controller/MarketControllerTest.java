@@ -41,7 +41,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @MockBean(JpaMetamodelMappingContext.class)
 @MockBean(JwtTokenProvider.class)
 class MarketControllerTest {
-
     @MockBean
     private MarketWriteService marketWriteService;
     @MockBean
@@ -72,7 +71,7 @@ class MarketControllerTest {
                                         .build()
                         )))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$").value("음식점 등록이 완료되었습니다."))
+                .andExpect(jsonPath("$").value("음식점 등록 신청이 완료되었습니다."))
                 .andDo(print());
     }
 
@@ -227,6 +226,42 @@ class MarketControllerTest {
                                         .parkType(ParkType.FORBIDDEN)
                                         .build()
                         )))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.errorMessage").value(MARKET_STATUS_IS_NOT_APPROVED.getMessage()))
+                .andDo(print());
+    }
+
+    @Test
+    void deleteMarketSuccess() throws Exception{
+        //given
+        doNothing().when(marketWriteService).deleteMarket(any());
+        //when
+        //then
+        mockMvc.perform(delete("/api/v1/market/delete"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").value("음식점 폐업이 완료되었습니다."))
+                .andDo(print());
+    }
+
+    @Test
+    void deleteMarketFail_NoMarket() throws Exception{
+        //given
+        doThrow(new MarketException(MARKET_NOT_FOUND)).when(marketWriteService).deleteMarket(any());
+        //when
+        //then
+        mockMvc.perform(delete("/api/v1/market/delete"))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.errorMessage").value(MARKET_NOT_FOUND.getMessage()))
+                .andDo(print());
+    }
+
+    @Test
+    void deleteMarketFail_NotApproved() throws Exception{
+        //given
+        doThrow(new MarketException(MARKET_STATUS_IS_NOT_APPROVED)).when(marketWriteService).deleteMarket(any());
+        //when
+        //then
+        mockMvc.perform(delete("/api/v1/market/delete"))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.errorMessage").value(MARKET_STATUS_IS_NOT_APPROVED.getMessage()))
                 .andDo(print());

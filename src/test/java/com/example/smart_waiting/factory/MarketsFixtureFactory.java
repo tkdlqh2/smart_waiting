@@ -20,7 +20,8 @@ public class MarketsFixtureFactory {
                 .randomize(String.class, new StringRandomizer())
                 .stringLengthRange(1, 10)
                 .randomize(Long.class, new LongRangeRandomizer(1L, 100L))
-                .randomize(FoodType.class, new EnumRandomizer<>(FoodType.class));
+                .randomize(FoodType.class, new EnumRandomizer<>(FoodType.class))
+                .collectionSizeRange(0,2);
         return new EasyRandom(parameter).nextObject(Market.class);
     }
 

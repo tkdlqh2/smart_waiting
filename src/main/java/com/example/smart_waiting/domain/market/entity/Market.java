@@ -69,6 +69,9 @@ public class Market extends BaseEntity {
         this.openHour = parameter.getOpenHour();
         this.closeHour = parameter.getCloseHour();
         this.status = UNAPPROVED;
+        this.dayOffs = parameter.getDayOffs();
+        this.foodType = parameter.getFoodType();
+        this.parkType = parameter.getParkType();
     }
 
     public void update(MarketUpdateInput parameter) {

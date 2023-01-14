@@ -5,6 +5,7 @@ import com.example.smart_waiting.domain.market.dto.MarketUpdateInput;
 import com.example.smart_waiting.domain.market.entity.Market;
 import com.example.smart_waiting.domain.market.repository.MarketRepository;
 import com.example.smart_waiting.domain.market.type.FoodType;
+import com.example.smart_waiting.domain.market.type.MarketStatus;
 import com.example.smart_waiting.domain.market.type.ParkType;
 import com.example.smart_waiting.domain.market.type.WeekDay;
 import com.example.smart_waiting.domain.user.entity.User;
@@ -20,8 +21,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.Optional;
 import java.util.Set;
 
-import static com.example.smart_waiting.exception.error_code.MarketErrorCode.ALREADY_HAVE_MARKET;
-import static com.example.smart_waiting.exception.error_code.MarketErrorCode.MARKET_NOT_FOUND;
+import static com.example.smart_waiting.exception.error_code.MarketErrorCode.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.BDDMockito.given;
@@ -119,7 +119,10 @@ class MarketWriteServiceTest {
                 .build();
 
         ArgumentCaptor<Market> captor = ArgumentCaptor.forClass(Market.class);
-        given(marketRepository.findByOwner(ownerUser)).willReturn(Optional.of(MarketsFixtureFactory.create()));
+
+        Market createdMarket = MarketsFixtureFactory.create();
+        createdMarket.setStatus(MarketStatus.APPROVED);
+        given(marketRepository.findByOwner(ownerUser)).willReturn(Optional.of(createdMarket));
 
         //when
         marketWriteService.updateMarket(ownerUser,marketInput);
@@ -136,7 +139,7 @@ class MarketWriteServiceTest {
     }
 
     @Test
-    void updateMarketFail(){
+    void updateMarketFail_marketNotFound(){
         //given
 
         User ownerUser = User.builder()
@@ -158,6 +161,34 @@ class MarketWriteServiceTest {
             marketWriteService.updateMarket(ownerUser,marketInput);
         } catch (Exception e){
             assertEquals(MARKET_NOT_FOUND.getMessage(), e.getMessage());
+        }
+    }
+
+    @Test
+    void updateMarketFail_statusIsNotApproved(){
+        //given
+
+        User ownerUser = User.builder()
+                .id(1L)
+                .build();
+
+        MarketUpdateInput marketInput = MarketUpdateInput.builder()
+                .openHour(7L)
+                .closeHour(14L)
+                .parkType(ParkType.VALET)
+                .dayOffs(Set.of(WeekDay.SUNDAY,WeekDay.TUESDAY))
+                .build();
+
+        Market createdMarket = MarketsFixtureFactory.create();
+        createdMarket.setStatus(MarketStatus.UNAPPROVED);
+        given(marketRepository.findByOwner(ownerUser)).willReturn(Optional.of(createdMarket));
+
+        //when
+        //then
+        try{
+            marketWriteService.updateMarket(ownerUser,marketInput);
+        } catch (Exception e){
+            assertEquals(MARKET_STATUS_IS_NOT_APPROVED.getMessage(), e.getMessage());
         }
     }
 

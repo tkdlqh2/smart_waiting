@@ -1,5 +1,6 @@
 package com.example.smart_waiting.application.controller;
 
+import com.example.smart_waiting.domain.market.dto.MarketDetails;
 import com.example.smart_waiting.domain.market.dto.MarketDto;
 import com.example.smart_waiting.domain.market.dto.MarketFilter;
 import com.example.smart_waiting.domain.market.dto.MarketInput;
@@ -37,4 +38,8 @@ public class MarketController {
         return ResponseEntity.ok(marketReadService.getMarketsByFilter(filter,request));
     }
 
+    @GetMapping("/details/{id}")
+    public ResponseEntity<MarketDetails> getMarketDetails(@PathVariable Long id){
+        return ResponseEntity.ok(marketReadService.getMarketDetails(id));
+    }
 }

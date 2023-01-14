@@ -1,5 +1,6 @@
 package com.example.smart_waiting.application.controller;
 
+import com.example.smart_waiting.application.usecase.RegisterMarketUserUsecase;
 import com.example.smart_waiting.domain.market.dto.MarketDetails;
 import com.example.smart_waiting.domain.market.dto.MarketDto;
 import com.example.smart_waiting.domain.market.dto.MarketFilter;
@@ -46,6 +47,8 @@ class MarketControllerTest {
     private MarketWriteService marketWriteService;
     @MockBean
     private MarketReadService marketReadService;
+    @MockBean
+    private RegisterMarketUserUsecase registerMarketUserUsecase;
     @Autowired
     private MockMvc mockMvc;
     @Autowired
@@ -54,7 +57,7 @@ class MarketControllerTest {
     @Test
     void registerSuccess() throws Exception {
 
-        doNothing().when(marketWriteService).register(any(),any());
+        doNothing().when(registerMarketUserUsecase).register(any(),any());
 
         mockMvc.perform(post("/api/v1/market/register")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -77,7 +80,7 @@ class MarketControllerTest {
     @Test
     void registerFail_alreadyMarketHaveUser() throws Exception {
 
-        doThrow(new MarketException(ALREADY_HAVE_MARKET)).when(marketWriteService).register(any(),any());
+        doThrow(new MarketException(ALREADY_HAVE_MARKET)).when(registerMarketUserUsecase).register(any(),any());
 
         mockMvc.perform(post("/api/v1/market/register")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -99,7 +102,7 @@ class MarketControllerTest {
     @Test
     void registerFail_invalidInput() throws Exception {
 
-        doNothing().when(marketWriteService).register(any(),any());
+        doNothing().when(registerMarketUserUsecase).register(any(),any());
 
         mockMvc.perform(post("/api/v1/market/register")
                         .contentType(MediaType.APPLICATION_JSON)

@@ -10,9 +10,11 @@ import com.example.smart_waiting.util.CursorRequest;
 import com.example.smart_waiting.util.PageCursor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import static com.example.smart_waiting.exception.error_code.MarketErrorCode.MARKET_NOT_FOUND;
 
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 @Service
 public class MarketReadService {

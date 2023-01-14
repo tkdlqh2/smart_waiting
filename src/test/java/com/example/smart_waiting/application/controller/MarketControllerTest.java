@@ -1,12 +1,11 @@
 package com.example.smart_waiting.application.controller;
 
 import com.example.smart_waiting.application.usecase.RegisterMarketUserUsecase;
-import com.example.smart_waiting.domain.market.dto.MarketDetails;
-import com.example.smart_waiting.domain.market.dto.MarketDto;
-import com.example.smart_waiting.domain.market.dto.MarketFilter;
-import com.example.smart_waiting.domain.market.dto.MarketInput;
+import com.example.smart_waiting.domain.market.dto.*;
 import com.example.smart_waiting.domain.market.service.MarketReadService;
 import com.example.smart_waiting.domain.market.service.MarketWriteService;
+import com.example.smart_waiting.domain.market.type.ParkType;
+import com.example.smart_waiting.domain.market.type.WeekDay;
 import com.example.smart_waiting.exception.exception_class.MarketException;
 import com.example.smart_waiting.factory.MarketsFixtureFactory;
 import com.example.smart_waiting.security.JwtTokenProvider;
@@ -24,15 +23,15 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
-import static com.example.smart_waiting.exception.error_code.MarketErrorCode.ALREADY_HAVE_MARKET;
+import static com.example.smart_waiting.exception.error_code.MarketErrorCode.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -167,6 +166,69 @@ class MarketControllerTest {
                 .andExpect(jsonPath("$.dayOffs").value(marketDetails.getDayOffs()))
                 .andExpect(jsonPath("$.foodType").value(marketDetails.getFoodType()))
                 .andExpect(jsonPath("$.parkType").value(marketDetails.getParkType()))
+                .andDo(print());
+    }
+
+    @Test
+    void updateMarketSuccess() throws Exception{
+        //given
+        doNothing().when(marketWriteService).updateMarket(any(),any());
+        //when
+        //then
+        mockMvc.perform(patch("/api/v1/market/update")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(
+                        MarketUpdateInput.builder()
+                                .openHour(1L)
+                                .closeHour(14L)
+                                .dayOffs(Set.of(WeekDay.SUNDAY))
+                                .parkType(ParkType.FORBIDDEN)
+                                .build()
+                )))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").value("음식점 변경이 완료되었습니다."))
+                .andDo(print());
+    }
+
+    @Test
+    void updateMarketFail_NoMarket() throws Exception{
+        //given
+        doThrow(new MarketException(MARKET_NOT_FOUND)).when(marketWriteService).updateMarket(any(),any());
+        //when
+        //then
+        mockMvc.perform(patch("/api/v1/market/update")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(
+                                MarketUpdateInput.builder()
+                                        .openHour(1L)
+                                        .closeHour(14L)
+                                        .dayOffs(Set.of(WeekDay.SUNDAY))
+                                        .parkType(ParkType.FORBIDDEN)
+                                        .build()
+                        )))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.errorMessage").value(MARKET_NOT_FOUND.getMessage()))
+                .andDo(print());
+    }
+
+    @Test
+    void updateMarketFail_NotApproved() throws Exception{
+        //given
+        doThrow(new MarketException(MARKET_STATUS_IS_NOT_APPROVED)).when(marketWriteService).updateMarket(any(),any());
+        //when
+        //then
+        mockMvc.perform(patch("/api/v1/market/update")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(
+                                MarketUpdateInput.builder()
+                                        .openHour(1L)
+                                        .closeHour(14L)
+                                        .dayOffs(Set.of(WeekDay.SUNDAY))
+                                        .parkType(ParkType.FORBIDDEN)
+                                        .build()
+                        )))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.errorMessage").value(MARKET_STATUS_IS_NOT_APPROVED.getMessage()))
                 .andDo(print());
     }
 }

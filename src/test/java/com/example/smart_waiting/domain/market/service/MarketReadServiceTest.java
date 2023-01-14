@@ -5,6 +5,7 @@ import com.example.smart_waiting.domain.market.dto.MarketDto;
 import com.example.smart_waiting.domain.market.dto.MarketFilter;
 import com.example.smart_waiting.domain.market.entity.Market;
 import com.example.smart_waiting.domain.market.repository.MarketRepository;
+import com.example.smart_waiting.exception.NoErrorException;
 import com.example.smart_waiting.factory.MarketsFixtureFactory;
 import com.example.smart_waiting.util.CursorRequest;
 import com.example.smart_waiting.util.PageCursor;
@@ -20,6 +21,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static com.example.smart_waiting.exception.error_code.MarketErrorCode.MARKET_NOT_FOUND;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.BDDMockito.given;
 
@@ -78,4 +80,17 @@ class MarketReadServiceTest {
         assertEquals(createdMarket.getParkType(), result.getParkType());
     }
 
+    @Test
+    void getMarketDetailsFail_noMarket(){
+        //given
+        given(marketRepository.findById(1L)).willReturn(Optional.empty());
+        //when
+        //then
+        try {
+            marketReadService.getMarketDetails(1L);
+            throw new NoErrorException();
+        }catch (Exception e){
+               assertEquals(MARKET_NOT_FOUND.getMessage(),e.getMessage());
+        }
+    }
 }

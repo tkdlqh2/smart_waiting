@@ -1,5 +1,8 @@
 package com.example.smart_waiting.exception;
 
+import com.example.smart_waiting.exception.exception_class.MarketException;
+import com.example.smart_waiting.exception.exception_class.SecurityException;
+import com.example.smart_waiting.exception.exception_class.UserException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -43,6 +46,12 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(SecurityException.class)
     public ResponseEntity<GlobalErrorResult> accessDeniedExceptionHandler(SecurityException e){
+        GlobalErrorResult result = GlobalErrorResult.of(e.getMessage());
+        return new ResponseEntity<>(result, e.getErrorCode().getHttpStatus());
+    }
+
+    @ExceptionHandler(MarketException.class)
+    public ResponseEntity<GlobalErrorResult> marketExceptionHandler(MarketException e){
         GlobalErrorResult result = GlobalErrorResult.of(e.getMessage());
         return new ResponseEntity<>(result, e.getErrorCode().getHttpStatus());
     }

@@ -1,4 +1,4 @@
-package com.example.smart_waiting.exception;
+package com.example.smart_waiting.exception.exception_class;
 
 import com.example.smart_waiting.exception.error_code.SecurityErrorCode;
 import lombok.Getter;

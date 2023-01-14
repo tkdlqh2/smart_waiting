@@ -3,7 +3,7 @@ package com.example.smart_waiting.domain.user.service;
 import com.example.smart_waiting.domain.user.dto.UserLogInInput;
 import com.example.smart_waiting.domain.user.entity.User;
 import com.example.smart_waiting.domain.user.repository.UserRepository;
-import com.example.smart_waiting.exception.UserException;
+import com.example.smart_waiting.exception.exception_class.UserException;
 import com.example.smart_waiting.security.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

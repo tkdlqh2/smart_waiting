@@ -3,7 +3,7 @@ package com.example.smart_waiting.domain.user.service;
 import com.example.smart_waiting.domain.user.dto.UserInput;
 import com.example.smart_waiting.domain.user.entity.User;
 import com.example.smart_waiting.domain.user.repository.UserRepository;
-import com.example.smart_waiting.exception.UserException;
+import com.example.smart_waiting.exception.exception_class.UserException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -62,6 +62,11 @@ public class UserWriteService {
         }
 
         user.approve();
+        userRepository.save(user);
+    }
+
+    public void addMarketRole(User user) {
+        user.getRoles().add("ROLE_MARKET");
         userRepository.save(user);
     }
 }

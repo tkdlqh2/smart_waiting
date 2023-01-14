@@ -1,5 +1,6 @@
 package com.example.smart_waiting.application.controller;
 
+import com.example.smart_waiting.application.usecase.RegisterMarketUserUsecase;
 import com.example.smart_waiting.domain.market.dto.MarketDetails;
 import com.example.smart_waiting.domain.market.dto.MarketDto;
 import com.example.smart_waiting.domain.market.dto.MarketFilter;
@@ -23,11 +24,12 @@ public class MarketController {
 
     private final MarketWriteService marketWriteService;
     private final MarketReadService marketReadService;
+    private final RegisterMarketUserUsecase registerMarketUserUsecase;
 
     @PostMapping("/register")
     public ResponseEntity<String> register(Principal principal, @Valid @RequestBody MarketInput input){
         var user = (User) principal;
-        marketWriteService.register(user, input);
+        registerMarketUserUsecase.register(user, input);
         return ResponseEntity.ok("음식점 등록이 완료되었습니다.");
     }
 

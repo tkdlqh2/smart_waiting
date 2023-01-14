@@ -64,4 +64,8 @@ public class UserWriteService {
         user.approve();
         userRepository.save(user);
     }
+
+    public void addMarketRole(User user) {
+        user.getRoles().add("ROLE_MARKET");
+    }
 }

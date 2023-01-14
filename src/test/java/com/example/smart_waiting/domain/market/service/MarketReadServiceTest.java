@@ -66,18 +66,19 @@ class MarketReadServiceTest {
         //given
         Market createdMarket = MarketsFixtureFactory.create();
         given(marketRepository.findById(1L)).willReturn(Optional.of(createdMarket));
+        MarketDetails marketDetails = MarketDetails.of(createdMarket);
         //when
         MarketDetails result = marketReadService.getMarketDetails(1L);
         //then
-        assertEquals(createdMarket.getName(), result.getName());
-        assertEquals(createdMarket.getRcate1(), result.getRcate1());
-        assertEquals(createdMarket.getRcate2(), result.getRcate2());
-        assertEquals(createdMarket.getDetailAddress(), result.getDetailAddress());
-        assertEquals(createdMarket.getOpenHour(), result.getOpenHour());
-        assertEquals(createdMarket.getCloseHour(), result.getCloseHour());
-        assertEquals(createdMarket.getDayOffs(), result.getDayOffs());
-        assertEquals(createdMarket.getFoodType(), result.getFoodType());
-        assertEquals(createdMarket.getParkType(), result.getParkType());
+        assertEquals(marketDetails.getName(), result.getName());
+        assertEquals(marketDetails.getRcate1(), result.getRcate1());
+        assertEquals(marketDetails.getRcate2(), result.getRcate2());
+        assertEquals(marketDetails.getDetailAddress(), result.getDetailAddress());
+        assertEquals(marketDetails.getOpenHour(), result.getOpenHour());
+        assertEquals(marketDetails.getCloseHour(), result.getCloseHour());
+        assertEquals(marketDetails.getDayOffs(), result.getDayOffs());
+        assertEquals(marketDetails.getFoodType(), result.getFoodType());
+        assertEquals(marketDetails.getParkType(), result.getParkType());
     }
 
     @Test

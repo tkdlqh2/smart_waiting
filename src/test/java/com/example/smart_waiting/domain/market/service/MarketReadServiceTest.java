@@ -59,12 +59,13 @@ class MarketReadServiceTest {
 //        body.stream().forEach(x-> System.out.println(x.getRcate2()+" "+x.getId()+" "+x.getFoodType()+" "+x.getName()));
     }
 
+    @Test
     void getMarketDetailsSuccess(){
         //given
         Market createdMarket = MarketsFixtureFactory.create();
         given(marketRepository.findById(1L)).willReturn(Optional.of(createdMarket));
         //when
-        MarketDetails result = marketReadService.getMarketDetail(1L);
+        MarketDetails result = marketReadService.getMarketDetails(1L);
         //then
         assertEquals(createdMarket.getName(), result.getName());
         assertEquals(createdMarket.getRcate1(), result.getRcate1());
@@ -74,7 +75,7 @@ class MarketReadServiceTest {
         assertEquals(createdMarket.getCloseHour(), result.getCloseHour());
         assertEquals(createdMarket.getDayOffs(), result.getDayOffs());
         assertEquals(createdMarket.getFoodType(), result.getFoodType());
-        assertEquals(createdMarket.getParkType(), result.getParkType());;
+        assertEquals(createdMarket.getParkType(), result.getParkType());
     }
 
 }

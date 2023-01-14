@@ -6,10 +6,12 @@ import com.example.smart_waiting.domain.market.type.FoodType;
 import com.example.smart_waiting.domain.market.type.ParkType;
 import com.example.smart_waiting.domain.market.type.WeekDay;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
 
+@Getter
 @Builder
 @RequiredArgsConstructor
 public class MarketDetails {

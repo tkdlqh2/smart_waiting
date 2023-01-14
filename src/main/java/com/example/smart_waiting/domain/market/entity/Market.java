@@ -80,4 +80,8 @@ public class Market extends BaseEntity {
         this.dayOffs = parameter.getDayOffs();
         this.parkType = parameter.getParkType();
     }
+
+    public void setStatus(MarketStatus status){
+        this.status = status;
+    }
 }

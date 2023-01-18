@@ -1,11 +1,13 @@
 package com.example.smart_waiting.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 @Configuration
@@ -22,15 +24,17 @@ public class RedisConfig {
     }
 
     @Bean
-    public RedisTemplate<String,Object> redisTemplate(RedisConnectionFactory redisConnectionFactory){
-        RedisTemplate<String,Object> redisTemplate = new RedisTemplate<>();
-        StringRedisSerializer serializer = new StringRedisSerializer();
-        redisTemplate.setConnectionFactory(redisConnectionFactory);
+    public RedisTemplate<String, Long> redisTemplate(RedisConnectionFactory redisConnectionFactory){
+        ObjectMapper objectMapper = new ObjectMapper();
 
-        redisTemplate.setKeySerializer(serializer);
-        redisTemplate.setValueSerializer(serializer);
-        redisTemplate.setHashKeySerializer(serializer);
-        redisTemplate.setHashValueSerializer(serializer);
-        return redisTemplate;
+        Jackson2JsonRedisSerializer<Long> jackson2JsonRedisSerializer =
+                new Jackson2JsonRedisSerializer<>(Long.class);
+        jackson2JsonRedisSerializer.setObjectMapper(objectMapper);
+
+        RedisTemplate<String,Long> template = new RedisTemplate<>();
+        template.setConnectionFactory(redisConnectionFactory);
+        template.setKeySerializer(new StringRedisSerializer());
+        template.setValueSerializer(jackson2JsonRedisSerializer);
+        return template;
     }
 }

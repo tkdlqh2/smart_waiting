@@ -15,7 +15,7 @@ public class WaitingsWriteService {
 
     private final WaitingsRepository waitingsRepository;
 
-    public void registerWaiting(User user, Long marketId){
+    public int registerWaiting(User user, Long marketId){
 
         if(waitingsRepository.existsByUserId(user.getId())){throw new WaitingsException(ALREADY_REGISTERED_USER);}
 
@@ -25,6 +25,7 @@ public class WaitingsWriteService {
                 .build();
 
         waitingsRepository.save(waitings);
+        return waitingsRepository.countByMarketId(marketId);
     }
 
 }

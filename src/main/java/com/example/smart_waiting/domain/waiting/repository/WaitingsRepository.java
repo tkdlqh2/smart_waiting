@@ -48,4 +48,13 @@ public class WaitingsRepository {
     public List<Waitings> findAllByMarketId(Long marketId, int size){
         return Objects.requireNonNull(redisTemplate.opsForList().range(MARKET_QUEUE_STRING + marketId, 0, size)).stream()
                 .map(x-> Waitings.builder().userId(x).marketId(marketId).build()).collect(Collectors.toList());}
+
+    public int countByMarketId(Long marketId) {
+        var size = redisTemplate.opsForList().size(MARKET_QUEUE_STRING+marketId);
+        if(ObjectUtils.isEmpty(size)){
+            return 0;
+        }else{
+            return size.intValue();
+        }
+    }
 }

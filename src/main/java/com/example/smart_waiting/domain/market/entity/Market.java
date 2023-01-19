@@ -54,6 +54,7 @@ public class Market extends BaseEntity {
 
     private FoodType foodType;
     private ParkType parkType;
+    private Long waitingTimePerTeam;
 
     public Market(){
         super(LocalDateTime.now(),null);

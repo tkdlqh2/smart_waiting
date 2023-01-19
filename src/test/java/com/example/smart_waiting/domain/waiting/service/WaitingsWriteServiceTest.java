@@ -1,6 +1,7 @@
 package com.example.smart_waiting.domain.waiting.service;
 
 import com.example.smart_waiting.domain.user.entity.User;
+import com.example.smart_waiting.domain.waiting.dto.WaitingsResult;
 import com.example.smart_waiting.domain.waiting.entity.Waitings;
 import com.example.smart_waiting.domain.waiting.repository.WaitingsRepository;
 import com.example.smart_waiting.exception.NoErrorException;
@@ -31,14 +32,17 @@ class WaitingsWriteServiceTest {
         User user = User.builder().id(2L).build();
         ArgumentCaptor<Waitings> captor = ArgumentCaptor.forClass(Waitings.class);
         given(waitingsRepository.existsByUserId(user.getId())).willReturn(false);
+        given(waitingsRepository.countByMarketId(10L)).willReturn(5);
         //when
-        waitingsWriteService.registerWaiting(user, 10L);
+        int result = waitingsWriteService.registerWaiting(user, 10L);
 
         //then
         verify(waitingsRepository,times(1)).save(captor.capture());
         var capturedWaitings = captor.getValue();
         assertEquals(user.getId(),capturedWaitings.getUserId());
         assertEquals(10L,capturedWaitings.getMarketId());
+        assertEquals(5,result);
+
     }
 
     @Test

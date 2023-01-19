@@ -5,6 +5,7 @@ import com.example.smart_waiting.domain.market.dto.MarketDto;
 import com.example.smart_waiting.domain.market.dto.MarketFilter;
 import com.example.smart_waiting.domain.market.entity.Market;
 import com.example.smart_waiting.domain.market.repository.MarketRepository;
+import com.example.smart_waiting.domain.waiting.dto.WaitingsResult;
 import com.example.smart_waiting.exception.NoErrorException;
 import com.example.smart_waiting.factory.MarketsFixtureFactory;
 import com.example.smart_waiting.util.CursorRequest;
@@ -33,6 +34,7 @@ class MarketReadServiceTest {
 
     @InjectMocks
     private MarketReadService marketReadService;
+    private static final Long DEFAULT_WAITING_TIME_PER_TEAM = 5L;
 
     @Test
     void getMarketsByFilterSuccess(){
@@ -93,5 +95,18 @@ class MarketReadServiceTest {
         }catch (Exception e){
                assertEquals(MARKET_NOT_FOUND.getMessage(),e.getMessage());
         }
+    }
+
+    @Test
+    void getWaitingsResultSuccess(){
+        //given
+        Market market = Market.builder().id(1L).build();
+        given(marketRepository.findById(1L)).willReturn(Optional.of(market));
+
+        //when
+        WaitingsResult result = marketReadService.getWaitingsResult(1L,5);
+        //then
+        assertEquals(5, result.getPriorTeams());
+        assertEquals((5+1)*DEFAULT_WAITING_TIME_PER_TEAM, result.getExpectedWaitingTime());
     }
 }

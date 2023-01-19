@@ -1,7 +1,5 @@
 package com.example.smart_waiting.domain.waiting.service;
 
-import com.example.smart_waiting.domain.user.entity.User;
-import com.example.smart_waiting.domain.waiting.dto.WaitingsResult;
 import com.example.smart_waiting.domain.waiting.entity.Waitings;
 import com.example.smart_waiting.domain.waiting.repository.WaitingsRepository;
 import com.example.smart_waiting.exception.NoErrorException;
@@ -29,17 +27,16 @@ class WaitingsWriteServiceTest {
     @Test
     void registerWaitingsSuccess(){
         //given
-        User user = User.builder().id(2L).build();
         ArgumentCaptor<Waitings> captor = ArgumentCaptor.forClass(Waitings.class);
-        given(waitingsRepository.existsByUserId(user.getId())).willReturn(false);
+        given(waitingsRepository.existsByUserId(2L)).willReturn(false);
         given(waitingsRepository.countByMarketId(10L)).willReturn(5);
         //when
-        int result = waitingsWriteService.registerWaiting(user, 10L);
+        int result = waitingsWriteService.registerWaiting(2L, 10L);
 
         //then
         verify(waitingsRepository,times(1)).save(captor.capture());
         var capturedWaitings = captor.getValue();
-        assertEquals(user.getId(),capturedWaitings.getUserId());
+        assertEquals(2L,capturedWaitings.getUserId());
         assertEquals(10L,capturedWaitings.getMarketId());
         assertEquals(5,result);
 
@@ -48,12 +45,11 @@ class WaitingsWriteServiceTest {
     @Test
     void registerWaitingsFail_alreadyRegisteredUser(){
         //given
-        User user = User.builder().id(2L).build();
-        given(waitingsRepository.existsByUserId(user.getId())).willReturn(true);
+        given(waitingsRepository.existsByUserId(2L)).willReturn(true);
         //when
         //then
         try {
-            waitingsWriteService.registerWaiting(user, 10L);
+            waitingsWriteService.registerWaiting(2L, 10L);
             throw new NoErrorException();
         } catch (Exception e){
             assertEquals(ALREADY_REGISTERED_USER.getMessage(),e.getMessage());

@@ -1,6 +1,5 @@
 package com.example.smart_waiting.domain.waiting.service;
 
-import com.example.smart_waiting.domain.user.entity.User;
 import com.example.smart_waiting.domain.waiting.entity.Waitings;
 import com.example.smart_waiting.domain.waiting.repository.WaitingsRepository;
 import com.example.smart_waiting.exception.exception_class.WaitingsException;
@@ -15,12 +14,12 @@ public class WaitingsWriteService {
 
     private final WaitingsRepository waitingsRepository;
 
-    public int registerWaiting(User user, Long marketId){
+    public int registerWaiting(Long userId, Long marketId){
 
-        if(waitingsRepository.existsByUserId(user.getId())){throw new WaitingsException(ALREADY_REGISTERED_USER);}
+        if(waitingsRepository.existsByUserId(userId)){throw new WaitingsException(ALREADY_REGISTERED_USER);}
 
         Waitings waitings = Waitings.builder()
-                .userId(user.getId())
+                .userId(userId)
                 .marketId(marketId)
                 .build();
 

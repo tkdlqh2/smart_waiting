@@ -5,6 +5,8 @@ import com.example.smart_waiting.domain.market.dto.MarketDto;
 import com.example.smart_waiting.domain.market.dto.MarketFilter;
 import com.example.smart_waiting.domain.market.entity.Market;
 import com.example.smart_waiting.domain.market.repository.MarketRepository;
+import com.example.smart_waiting.domain.user.entity.User;
+import com.example.smart_waiting.domain.waiting.dto.WaitingsResult;
 import com.example.smart_waiting.exception.NoErrorException;
 import com.example.smart_waiting.factory.MarketsFixtureFactory;
 import com.example.smart_waiting.util.CursorRequest;
@@ -33,6 +35,7 @@ class MarketReadServiceTest {
 
     @InjectMocks
     private MarketReadService marketReadService;
+    private static final Long DEFAULT_WAITING_TIME_PER_TEAM = 5L;
 
     @Test
     void getMarketsByFilterSuccess(){
@@ -92,6 +95,62 @@ class MarketReadServiceTest {
             throw new NoErrorException();
         }catch (Exception e){
                assertEquals(MARKET_NOT_FOUND.getMessage(),e.getMessage());
+        }
+    }
+
+    @Test
+    void getWaitingsResultSuccess(){
+        //given
+        Market market = Market.builder().id(1L).build();
+        given(marketRepository.findById(1L)).willReturn(Optional.of(market));
+
+        //when
+        WaitingsResult result = marketReadService.getWaitingsResult(1L,5);
+        //then
+        assertEquals(5, result.getPriorTeams());
+        assertEquals((5+1)*DEFAULT_WAITING_TIME_PER_TEAM, result.getExpectedWaitingTime());
+    }
+
+    @Test
+    void getWaitingsResultFail_noMarket(){
+        //given
+        given(marketRepository.findById(1L)).willReturn(Optional.empty());
+        //when
+        //then
+        try {
+            marketReadService.getWaitingsResult(1L,5);
+            throw new NoErrorException();
+        }catch (Exception e){
+            assertEquals(MARKET_NOT_FOUND.getMessage(),e.getMessage());
+        }
+    }
+
+    @Test
+    void getMarketByOwnerSuccess(){
+        //given
+        User owner = User.builder().id(1L).build();
+        Market market = Market.builder().owner(owner).id(5L).build();
+        given(marketRepository.findByOwner(owner)).willReturn(Optional.of(market));
+
+        //when
+        var result = marketReadService.getMarketByOwner(owner);
+        //then
+        assertEquals(5, result.getMarketId());
+    }
+
+    @Test
+    void getMarketByOwnerFail_NoMarket(){
+        //given
+        User owner = User.builder().id(1L).build();
+        given(marketRepository.findByOwner(owner)).willReturn(Optional.empty());
+
+        //when
+        //then
+        try {
+            marketReadService.getMarketByOwner(owner);
+            throw new NoErrorException();
+        }catch (Exception e){
+            assertEquals(MARKET_NOT_FOUND.getMessage(),e.getMessage());
         }
     }
 }

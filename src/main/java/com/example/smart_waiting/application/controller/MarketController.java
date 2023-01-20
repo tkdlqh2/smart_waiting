@@ -9,10 +9,10 @@ import com.example.smart_waiting.util.CursorRequest;
 import com.example.smart_waiting.util.PageCursor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.security.Principal;
 
 @RequiredArgsConstructor
 @RestController
@@ -24,8 +24,8 @@ public class MarketController {
     private final RegisterMarketUserUsecase registerMarketUserUsecase;
 
     @PostMapping("/register")
-    public ResponseEntity<String> register(Principal principal, @Valid @RequestBody MarketInput input){
-        var user = (User) principal;
+    public ResponseEntity<String> register(Authentication authentication, @Valid @RequestBody MarketInput input){
+        var user = (User) authentication.getPrincipal();
         registerMarketUserUsecase.register(user, input);
         return ResponseEntity.ok("음식점 등록 신청이 완료되었습니다.");
     }
@@ -43,15 +43,15 @@ public class MarketController {
     }
 
     @PatchMapping("/update")
-    public ResponseEntity<String> updateMarket(Principal principal, @RequestBody MarketUpdateInput input){
-        var user = (User) principal;
+    public ResponseEntity<String> updateMarket(Authentication authentication, @RequestBody MarketUpdateInput input){
+        var user = (User) authentication.getPrincipal();
         marketWriteService.updateMarket(user, input);
         return ResponseEntity.ok("음식점 변경이 완료되었습니다.");
     }
 
     @DeleteMapping("/delete")
-    public ResponseEntity<String> deleteMarket(Principal principal){
-        var user = (User) principal;
+    public ResponseEntity<String> deleteMarket(Authentication authentication){
+        var user = (User) authentication.getPrincipal();
         marketWriteService.deleteMarket(user);
         return ResponseEntity.ok("음식점 폐업이 완료되었습니다.");
     }

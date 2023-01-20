@@ -1,6 +1,6 @@
 package com.example.smart_waiting.application.controller;
 
-import com.example.smart_waiting.application.usecase.RegisterWaitingsUsecase;
+import com.example.smart_waiting.application.usecase.GetWaitingsResultUsecase;
 import com.example.smart_waiting.domain.user.entity.User;
 import com.example.smart_waiting.domain.waiting.dto.WaitingsResult;
 import com.example.smart_waiting.security.JwtTokenProvider;
@@ -12,28 +12,22 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.security.Principal;
-import java.util.List;
-
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(WaitingController.class)
 @AutoConfigureMockMvc(addFilters = false)
 @MockBean(JwtTokenProvider.class)
 @MockBean(JpaMetamodelMappingContext.class)
-@WithMockUser
 class WaitingControllerTest {
     @MockBean
-    private RegisterWaitingsUsecase registerWaitingsUsecase;
+    private GetWaitingsResultUsecase getWaitingsResultUsecase;
     @Autowired
     private MockMvc mockMvc;
     @Autowired
@@ -42,15 +36,36 @@ class WaitingControllerTest {
     @Test
     void registerWaitingsSuccess() throws Exception {
 
-        User user = User.builder().id(1L).build();
-        UsernamePasswordAuthenticationToken authentication =
-                new UsernamePasswordAuthenticationToken(user, null);
+        var authentication = getAuthToken(1L);
 
-        given(registerWaitingsUsecase.registerWaiting(any(),eq(2L)))
+        given(getWaitingsResultUsecase.registerWaiting(1L,2L))
                 .willReturn(new WaitingsResult(5,30));
 
         mockMvc.perform(post("/api/v1/waiting/register/2").principal(authentication))
                 .andExpect(status().isOk())
+                .andExpect(jsonPath("$.priorTeams").value(5))
+                .andExpect(jsonPath("$.expectedWaitingTime").value(30))
                 .andDo(print());
+    }
+
+    @Test
+    void getCurrentWaitingSuccess() throws Exception {
+
+        var authentication = getAuthToken(1L);
+
+        given(getWaitingsResultUsecase.getWaitings(1L))
+                .willReturn(new WaitingsResult(5,30));
+
+        mockMvc.perform(get("/api/v1/waiting/get").principal(authentication))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.priorTeams").value(5))
+                .andExpect(jsonPath("$.expectedWaitingTime").value(30))
+                .andDo(print());
+    }
+    private UsernamePasswordAuthenticationToken getAuthToken(Long id) {
+        User user = User.builder().id(id).build();
+        UsernamePasswordAuthenticationToken authentication =
+                new UsernamePasswordAuthenticationToken(user, null);
+        return authentication;
     }
 }

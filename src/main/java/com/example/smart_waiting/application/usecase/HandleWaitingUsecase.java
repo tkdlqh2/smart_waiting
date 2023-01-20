@@ -1,5 +1,6 @@
 package com.example.smart_waiting.application.usecase;
 
+import com.example.smart_waiting.domain.market.dto.MarketDtoForWaiting;
 import com.example.smart_waiting.domain.market.entity.Market;
 import com.example.smart_waiting.domain.market.service.MarketReadService;
 import com.example.smart_waiting.domain.user.entity.User;
@@ -16,7 +17,7 @@ public class HandleWaitingUsecase {
 
 
     public Waitings handleWaiting(User owner) {
-        Market market  = marketReadService.getMarketByOwner(owner);
-        return waitingsWriteService.handleWaitings(market.getId());
+        MarketDtoForWaiting info  = marketReadService.getMarketByOwner(owner);
+        return waitingsWriteService.handleWaitings(info.getMarketId());
     }
 }

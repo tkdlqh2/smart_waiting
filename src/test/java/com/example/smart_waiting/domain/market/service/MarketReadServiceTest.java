@@ -135,7 +135,7 @@ class MarketReadServiceTest {
         //when
         var result = marketReadService.getMarketByOwner(owner);
         //then
-        assertEquals(5, result.getId());
+        assertEquals(5, result.getMarketId());
     }
 
     @Test

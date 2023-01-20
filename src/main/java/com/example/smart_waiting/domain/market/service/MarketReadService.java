@@ -2,6 +2,7 @@ package com.example.smart_waiting.domain.market.service;
 
 import com.example.smart_waiting.domain.market.dto.MarketDetails;
 import com.example.smart_waiting.domain.market.dto.MarketDto;
+import com.example.smart_waiting.domain.market.dto.MarketDtoForWaiting;
 import com.example.smart_waiting.domain.market.dto.MarketFilter;
 import com.example.smart_waiting.domain.market.entity.Market;
 import com.example.smart_waiting.domain.market.repository.MarketRepository;
@@ -52,8 +53,8 @@ public class MarketReadService {
                 (priorTeams+1)*waitingTimePerTeam.intValue());
     }
 
-    public Market getMarketByOwner(User owner) {
-        return marketRepository.findByOwner(owner)
-                .orElseThrow(()-> new MarketException(MARKET_NOT_FOUND));
+    public MarketDtoForWaiting getMarketByOwner(User owner) {
+        return new MarketDtoForWaiting(marketRepository.findByOwner(owner)
+                .orElseThrow(()-> new MarketException(MARKET_NOT_FOUND)));
     }
 }

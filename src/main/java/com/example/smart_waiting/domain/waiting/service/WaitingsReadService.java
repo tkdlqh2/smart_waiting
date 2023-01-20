@@ -18,7 +18,7 @@ public class WaitingsReadService {
                 .orElseThrow(() -> new WaitingsException(WaitingsErrorCode.NOT_WAITING_USER));
 
         var wholeList = waitingsRepository.findAllByMarketId(waiting.getMarketId());
-        long wholeTeamsNum = wholeList.stream().takeWhile(x->x.getUserId().equals(userId)).count();
-        return new CurrentWaitingResult(waiting.getMarketId(), (int) wholeTeamsNum -1);
+        return new CurrentWaitingResult(waiting.getMarketId(),
+                (int)wholeList.stream().takeWhile(x->!x.getUserId().equals(userId)).count());
     }
 }

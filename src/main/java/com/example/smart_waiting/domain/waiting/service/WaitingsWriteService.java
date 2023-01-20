@@ -16,7 +16,8 @@ public class WaitingsWriteService {
 
     public int registerWaiting(Long userId, Long marketId){
 
-        if(waitingsRepository.existsByUserId(userId)){throw new WaitingsException(ALREADY_REGISTERED_USER);}
+        if(waitingsRepository.findByUserId(userId).isPresent())
+        {throw new WaitingsException(ALREADY_REGISTERED_USER);}
 
         Waitings waitings = Waitings.builder()
                 .userId(userId)

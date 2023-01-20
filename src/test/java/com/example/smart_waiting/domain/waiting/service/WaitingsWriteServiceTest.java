@@ -10,6 +10,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Optional;
+
 import static com.example.smart_waiting.exception.error_code.WaitingsErrorCode.ALREADY_REGISTERED_USER;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.BDDMockito.given;
@@ -28,7 +30,7 @@ class WaitingsWriteServiceTest {
     void registerWaitingsSuccess(){
         //given
         ArgumentCaptor<Waitings> captor = ArgumentCaptor.forClass(Waitings.class);
-        given(waitingsRepository.existsByUserId(2L)).willReturn(false);
+        given(waitingsRepository.findByUserId(2L)).willReturn(Optional.empty());
         given(waitingsRepository.countByMarketId(10L)).willReturn(5);
         //when
         int result = waitingsWriteService.registerWaiting(2L, 10L);
@@ -45,7 +47,8 @@ class WaitingsWriteServiceTest {
     @Test
     void registerWaitingsFail_alreadyRegisteredUser(){
         //given
-        given(waitingsRepository.existsByUserId(2L)).willReturn(true);
+        given(waitingsRepository.findByUserId(2L))
+                .willReturn(Optional.of(Waitings.builder().userId(2L).marketId(3L).build()));
         //when
         //then
         try {

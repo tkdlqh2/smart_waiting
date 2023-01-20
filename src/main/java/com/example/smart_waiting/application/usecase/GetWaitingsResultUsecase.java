@@ -1,9 +1,7 @@
 package com.example.smart_waiting.application.usecase;
 
 import com.example.smart_waiting.domain.market.service.MarketReadService;
-import com.example.smart_waiting.domain.user.entity.User;
 import com.example.smart_waiting.domain.waiting.dto.WaitingsResult;
-import com.example.smart_waiting.domain.waiting.entity.Waitings;
 import com.example.smart_waiting.domain.waiting.service.WaitingsReadService;
 import com.example.smart_waiting.domain.waiting.service.WaitingsWriteService;
 import lombok.RequiredArgsConstructor;
@@ -27,9 +25,5 @@ public class GetWaitingsResultUsecase {
     public WaitingsResult getWaitings(Long userId){
         var result = waitingsReadService.getCurrentWaiting(userId);
         return marketReadService.getWaitingsResult(result.getMarketId(), result.getPriorTeams());
-    }
-
-    public Waitings handleWaiting(Long userId) {
-        return null;
     }
 }

@@ -1,26 +1,38 @@
 package com.example.smart_waiting.application.controller;
 
-import com.example.smart_waiting.application.usecase.RegisterWaitingsUsecase;
+import com.example.smart_waiting.application.usecase.GetWaitingsResultUsecase;
 import com.example.smart_waiting.domain.user.entity.User;
 import com.example.smart_waiting.domain.waiting.dto.WaitingsResult;
+import com.example.smart_waiting.domain.waiting.entity.Waitings;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/waiting")
 public class WaitingController {
 
-    private final RegisterWaitingsUsecase registerWaitingsUsecase;
+    private final GetWaitingsResultUsecase getWaitingsResultUsecase;
 
     @PostMapping("/register/{marketId}")
     public ResponseEntity<WaitingsResult> registerWaiting(Authentication authentication, @PathVariable Long marketId){
         User user = (User) authentication.getPrincipal();
-        return ResponseEntity.ok(registerWaitingsUsecase.registerWaiting(user.getId(), marketId));
+        return ResponseEntity.ok(getWaitingsResultUsecase.registerWaiting(user.getId(), marketId));
+    }
+
+    @GetMapping("/get")
+    public ResponseEntity<WaitingsResult> getCurrentWaiting(Authentication authentication){
+        User user = (User) authentication.getPrincipal();
+        return ResponseEntity.ok(getWaitingsResultUsecase.getWaitings(user.getId()));
+    }
+
+    @PostMapping("/handle/{marketId}")
+    @PreAuthorize("MARKET")
+    public ResponseEntity<Waitings> handleWaiting(Authentication authentication){
+        User user = (User) authentication.getPrincipal();
+        return ResponseEntity.ok(getWaitingsResultUsecase.handleWaiting(user.getId()));
     }
 }

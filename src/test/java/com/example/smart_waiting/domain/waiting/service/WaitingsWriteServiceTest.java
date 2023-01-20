@@ -41,7 +41,6 @@ class WaitingsWriteServiceTest {
         assertEquals(2L,capturedWaitings.getUserId());
         assertEquals(10L,capturedWaitings.getMarketId());
         assertEquals(5,result);
-
     }
 
     @Test
@@ -57,5 +56,18 @@ class WaitingsWriteServiceTest {
         } catch (Exception e){
             assertEquals(ALREADY_REGISTERED_USER.getMessage(),e.getMessage());
         }
+    }
+
+    @Test
+    void handleWaitingsSuccess(){
+        //given
+        given(waitingsRepository.deleteByMarketId(10L))
+                .willReturn(Waitings.builder().marketId(10L).userId(5L).build());
+        //when
+        var result = waitingsWriteService.handleWaitings( 10L);
+
+        //then
+        assertEquals(10L,result.getMarketId());
+        assertEquals(5L,result.getUserId());
     }
 }

@@ -28,4 +28,8 @@ public class WaitingsWriteService {
         return waitingsRepository.countByMarketId(marketId);
     }
 
+    public Waitings handleWaitings(Long marketId) {
+        //대기 시간이 얼마남지 않은 유저들에게 알람 주는 서비스
+        return waitingsRepository.deleteByMarketId(marketId);
+    }
 }

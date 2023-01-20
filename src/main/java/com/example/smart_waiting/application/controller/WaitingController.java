@@ -35,6 +35,6 @@ public class WaitingController {
     @PreAuthorize("MARKET")
     public ResponseEntity<Waitings> handleWaiting(Authentication authentication){
         User user = (User) authentication.getPrincipal();
-        return ResponseEntity.ok(handleWaitingUsecase.handleWaiting(user.getId()));
+        return ResponseEntity.ok(handleWaitingUsecase.handleWaiting(user));
     }
 }

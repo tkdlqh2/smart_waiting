@@ -11,7 +11,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static com.example.smart_waiting.exception.error_code.WaitingsErrorCode.NOT_WAITING_USER;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
@@ -22,7 +23,7 @@ class WaitingsReadServiceTest {
     @InjectMocks
     private WaitingsReadService waitingsReadService;
     @Test
-    void getCurrentWaiting() {
+    void getCurrentWaitingSuccess() {
         //given
         given(waitingsRepository.findByUserId(1L))
                 .willReturn(Optional.of(Waitings.builder()
@@ -43,5 +44,19 @@ class WaitingsReadServiceTest {
         //then
         assertEquals(3L,result.getMarketId());
         assertEquals(3,result.getPriorTeams());
+    }
+
+    @Test
+    void getCurrentWaitingFail_notWaitingUser() {
+        //given
+        given(waitingsRepository.findByUserId(1L))
+                .willReturn(Optional.empty());
+        //when
+        //then
+        try {
+            waitingsReadService.getCurrentWaiting(1L);
+        }catch (Exception e){
+            assertEquals(NOT_WAITING_USER.getMessage(),e.getMessage());
+        }
     }
 }

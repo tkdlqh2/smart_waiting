@@ -7,7 +7,6 @@ import com.example.smart_waiting.domain.waiting.dto.WaitingsResult;
 import com.example.smart_waiting.domain.waiting.entity.Waitings;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,8 +30,8 @@ public class WaitingController {
         return ResponseEntity.ok(getWaitingsResultUsecase.getWaitings(user.getId()));
     }
 
-    @PostMapping("/handle/{marketId}")
-    @PreAuthorize("MARKET")
+    @PostMapping("/handle")
+//    @PreAuthorize("MARKET")
     public ResponseEntity<Waitings> handleWaiting(Authentication authentication){
         User user = (User) authentication.getPrincipal();
         return ResponseEntity.ok(handleWaitingUsecase.handleWaiting(user));

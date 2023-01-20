@@ -1,8 +1,10 @@
 package com.example.smart_waiting.application.controller;
 
 import com.example.smart_waiting.application.usecase.GetWaitingsResultUsecase;
+import com.example.smart_waiting.application.usecase.HandleWaitingUsecase;
 import com.example.smart_waiting.domain.user.entity.User;
 import com.example.smart_waiting.domain.waiting.dto.WaitingsResult;
+import com.example.smart_waiting.domain.waiting.entity.Waitings;
 import com.example.smart_waiting.security.JwtTokenProvider;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
@@ -28,6 +30,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class WaitingControllerTest {
     @MockBean
     private GetWaitingsResultUsecase getWaitingsResultUsecase;
+    @MockBean
+    private HandleWaitingUsecase handleWaitingUsecase;
     @Autowired
     private MockMvc mockMvc;
     @Autowired
@@ -62,10 +66,23 @@ class WaitingControllerTest {
                 .andExpect(jsonPath("$.expectedWaitingTime").value(30))
                 .andDo(print());
     }
+
+    @Test
+    void handleWaitingSuccess() throws Exception {
+
+        var authentication = getAuthToken(3L);
+
+        given(handleWaitingUsecase.handleWaiting((User)authentication.getPrincipal()))
+                .willReturn(Waitings.builder().userId(2L).marketId(4L).build());
+
+        mockMvc.perform(post("/api/v1/waiting/handle").principal(authentication))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.userId").value(2))
+                .andExpect(jsonPath("$.marketId").value(4))
+                .andDo(print());
+    }
     private UsernamePasswordAuthenticationToken getAuthToken(Long id) {
         User user = User.builder().id(id).build();
-        UsernamePasswordAuthenticationToken authentication =
-                new UsernamePasswordAuthenticationToken(user, null);
-        return authentication;
+        return new UsernamePasswordAuthenticationToken(user, null);
     }
 }

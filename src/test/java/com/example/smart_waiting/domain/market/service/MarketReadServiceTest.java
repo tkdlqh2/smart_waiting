@@ -34,11 +34,14 @@ class MarketReadServiceTest {
 
     @Mock
     private MarketWaitingTeamsRepository marketWaitingTeamsRepository;
+    @Mock
+    private MarketRepository marketRepository;
 
     @InjectMocks
     private MarketReadService marketReadService;
 
     private final Long MARKET_ID = 1L;
+    private static final Long DEFAULT_WAITING_TIME_PER_TEAM = 5L;
 
     @Test
     void getWaitingInfoSuccess(){
@@ -55,12 +58,6 @@ class MarketReadServiceTest {
 
     }
 
-
-    private MarketRepository marketRepository;
-
-    @InjectMocks
-    private MarketReadService marketReadService;
-    private static final Long DEFAULT_WAITING_TIME_PER_TEAM = 5L;
 
     @Test
     void getMarketsByFilterSuccess(){

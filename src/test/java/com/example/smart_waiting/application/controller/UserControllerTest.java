@@ -1,19 +1,22 @@
 package com.example.smart_waiting.application.controller;
 
 import com.example.smart_waiting.domain.user.dto.UserInput;
+import com.example.smart_waiting.domain.user.dto.UserLogInInput;
 import com.example.smart_waiting.domain.user.service.UserReadService;
 import com.example.smart_waiting.domain.user.service.UserWriteService;
-import com.example.smart_waiting.exception.UserException;
+import com.example.smart_waiting.exception.exception_class.UserException;
+import com.example.smart_waiting.security.JwtTokenProvider;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static com.example.smart_waiting.exception.UserErrorCode.*;
+import static com.example.smart_waiting.exception.error_code.UserErrorCode.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doNothing;
@@ -25,6 +28,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(UserController.class)
 @AutoConfigureMockMvc(addFilters = false)
+@MockBean(JpaMetamodelMappingContext.class)
+@MockBean(JwtTokenProvider.class)
 class UserControllerTest {
 
     @MockBean
@@ -195,6 +200,61 @@ class UserControllerTest {
         mockMvc.perform(get("/api/v1/user/1/auth/authKey"))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.errorMessage").value(CODE_MISMATCH.getMessage()))
+                .andDo(print());
+    }
+
+    @Test
+    void signInSuccess() throws Exception {
+
+        given(userReadService.signIn(
+                any())).willReturn("token");
+
+        mockMvc.perform(get("/api/v1/user/sign-in")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(
+                                UserLogInInput.builder()
+                                        .email("abc@gmail.com")
+                                        .password("Qlalfqjsgh!1")
+                                        .build()
+                        )))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").value("token"))
+                .andDo(print());
+    }
+
+    @Test
+    void signInFail_NoUser() throws Exception {
+
+        doThrow(new UserException(USER_NOT_FOUND)).when(userReadService).signIn(any());
+
+        mockMvc.perform(get("/api/v1/user/sign-in")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(
+                                UserLogInInput.builder()
+                                        .email("abc@gmail.com")
+                                        .password("Qlalfqjsgh!1")
+                                        .build()
+                        )))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.errorMessage").value(USER_NOT_FOUND.getMessage()))
+                .andDo(print());
+    }
+
+    @Test
+    void signInFail_passwordNotMatch() throws Exception {
+
+        doThrow(new UserException(PASSWORD_NOT_MATCH)).when(userReadService).signIn(any());
+
+        mockMvc.perform(get("/api/v1/user/sign-in")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(
+                                UserLogInInput.builder()
+                                        .email("abc@gmail.com")
+                                        .password("Qlalfqjsgh!1")
+                                        .build()
+                        )))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.errorMessage").value(PASSWORD_NOT_MATCH.getMessage()))
                 .andDo(print());
     }
 }

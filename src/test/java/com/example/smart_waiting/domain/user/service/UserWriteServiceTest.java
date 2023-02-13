@@ -13,11 +13,12 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
+import java.util.*;
 
 import static com.example.smart_waiting.domain.user.type.UserStatus.APPROVED;
-import static com.example.smart_waiting.exception.UserErrorCode.*;
+import static com.example.smart_waiting.exception.error_code.UserErrorCode.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -177,5 +178,26 @@ class UserWriteServiceTest {
         } catch (Exception e){
             assertEquals(CODE_MISMATCH.getMessage(),e.getMessage());
         }
+    }
+
+    @Test
+    void addMarketRoleSuccess(){
+        //given
+
+        List<String> roles = new ArrayList<>();
+        roles.add("ROLE_USER");
+
+        User user = User.builder()
+                .id(1L)
+                .roles(roles)
+                .build();
+
+        ArgumentCaptor<User> captor = ArgumentCaptor.forClass(User.class);
+        //when
+        userWriteService.addMarketRole(user);
+        //then
+        verify(userRepository,times(1)).save(captor.capture());
+        var capturedUser = captor.getValue();
+        assertTrue(capturedUser.getRoles().contains("ROLE_MARKET"));
     }
 }

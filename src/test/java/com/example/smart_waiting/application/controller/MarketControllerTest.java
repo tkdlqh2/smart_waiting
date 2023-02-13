@@ -6,6 +6,7 @@ import com.example.smart_waiting.domain.market.service.MarketReadService;
 import com.example.smart_waiting.domain.market.service.MarketWriteService;
 import com.example.smart_waiting.domain.market.type.ParkType;
 import com.example.smart_waiting.domain.market.type.WeekDay;
+import com.example.smart_waiting.domain.user.entity.User;
 import com.example.smart_waiting.exception.exception_class.MarketException;
 import com.example.smart_waiting.factory.MarketsFixtureFactory;
 import com.example.smart_waiting.security.JwtTokenProvider;
@@ -19,6 +20,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
 import org.springframework.http.MediaType;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Collections;
@@ -56,8 +58,9 @@ class MarketControllerTest {
     void registerSuccess() throws Exception {
 
         doNothing().when(registerMarketUserUsecase).register(any(),any());
+        var authentication = getAuthToken(3L);
 
-        mockMvc.perform(post("/api/v1/market/register")
+        mockMvc.perform(post("/api/v1/market/register").principal(authentication)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(
                                 MarketInput.builder()
@@ -77,10 +80,10 @@ class MarketControllerTest {
 
     @Test
     void registerFail_alreadyMarketHaveUser() throws Exception {
-
+        var authentication = getAuthToken(3L);
         doThrow(new MarketException(ALREADY_HAVE_MARKET)).when(registerMarketUserUsecase).register(any(),any());
 
-        mockMvc.perform(post("/api/v1/market/register")
+        mockMvc.perform(post("/api/v1/market/register").principal(authentication)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(
                                 MarketInput.builder()
@@ -99,10 +102,10 @@ class MarketControllerTest {
     }
     @Test
     void registerFail_invalidInput() throws Exception {
-
+        var authentication = getAuthToken(3L);
         doNothing().when(registerMarketUserUsecase).register(any(),any());
 
-        mockMvc.perform(post("/api/v1/market/register")
+        mockMvc.perform(post("/api/v1/market/register").principal(authentication)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(
                                 MarketInput.builder()
@@ -122,7 +125,7 @@ class MarketControllerTest {
     @Test
     void getMarketsByFilterSuccess() throws Exception {
         //given
-
+        var authentication = getAuthToken(3L);
         CursorRequest request = new CursorRequest(10L,20);
         List<MarketDto> body = MarketsFixtureFactory.createLists(20).stream()
                 .map(x-> new MarketDto(x.getId(),x.getName(),x.getRcate2(),x.getFoodType()))
@@ -134,7 +137,7 @@ class MarketControllerTest {
 
         //when
         //then
-        mockMvc.perform(get("/api/v1/market/list?size=10")
+        mockMvc.perform(get("/api/v1/market/list?size=10").principal(authentication)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(
                         MarketFilter.builder()
@@ -149,12 +152,13 @@ class MarketControllerTest {
     @Test
     void getMarketDetailsSuccess() throws Exception {
         //given
+        var authentication = getAuthToken(3L);
         MarketDetails marketDetails = MarketDetails.of(MarketsFixtureFactory.create());
         given(marketReadService.getMarketDetails(1L))
                 .willReturn(marketDetails);
         //when
         //then
-        mockMvc.perform(get("/api/v1/market/details/1"))
+        mockMvc.perform(get("/api/v1/market/details/1").principal(authentication))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value(marketDetails.getName()))
                 .andExpect(jsonPath("$.rcate1").value(marketDetails.getRcate1()))
@@ -171,10 +175,11 @@ class MarketControllerTest {
     @Test
     void updateMarketSuccess() throws Exception{
         //given
+        var authentication = getAuthToken(3L);
         doNothing().when(marketWriteService).updateMarket(any(),any());
         //when
         //then
-        mockMvc.perform(patch("/api/v1/market/update")
+        mockMvc.perform(patch("/api/v1/market/update").principal(authentication)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(
                         MarketUpdateInput.builder()
@@ -192,10 +197,11 @@ class MarketControllerTest {
     @Test
     void updateMarketFail_NoMarket() throws Exception{
         //given
+        var authentication = getAuthToken(3L);
         doThrow(new MarketException(MARKET_NOT_FOUND)).when(marketWriteService).updateMarket(any(),any());
         //when
         //then
-        mockMvc.perform(patch("/api/v1/market/update")
+        mockMvc.perform(patch("/api/v1/market/update").principal(authentication)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(
                                 MarketUpdateInput.builder()
@@ -214,9 +220,10 @@ class MarketControllerTest {
     void updateMarketFail_NotApproved() throws Exception{
         //given
         doThrow(new MarketException(MARKET_STATUS_IS_NOT_APPROVED)).when(marketWriteService).updateMarket(any(),any());
+        var authentication = getAuthToken(3L);
         //when
         //then
-        mockMvc.perform(patch("/api/v1/market/update")
+        mockMvc.perform(patch("/api/v1/market/update").principal(authentication)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(
                                 MarketUpdateInput.builder()
@@ -234,10 +241,11 @@ class MarketControllerTest {
     @Test
     void deleteMarketSuccess() throws Exception{
         //given
+        var authentication = getAuthToken(3L);
         doNothing().when(marketWriteService).deleteMarket(any());
         //when
         //then
-        mockMvc.perform(delete("/api/v1/market/delete"))
+        mockMvc.perform(delete("/api/v1/market/delete").principal(authentication))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").value("음식점 폐업이 완료되었습니다."))
                 .andDo(print());
@@ -246,10 +254,11 @@ class MarketControllerTest {
     @Test
     void deleteMarketFail_NoMarket() throws Exception{
         //given
+        var authentication = getAuthToken(3L);
         doThrow(new MarketException(MARKET_NOT_FOUND)).when(marketWriteService).deleteMarket(any());
         //when
         //then
-        mockMvc.perform(delete("/api/v1/market/delete"))
+        mockMvc.perform(delete("/api/v1/market/delete").principal(authentication))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.errorMessage").value(MARKET_NOT_FOUND.getMessage()))
                 .andDo(print());
@@ -258,12 +267,18 @@ class MarketControllerTest {
     @Test
     void deleteMarketFail_NotApproved() throws Exception{
         //given
+        var authentication = getAuthToken(3L);
         doThrow(new MarketException(MARKET_STATUS_IS_NOT_APPROVED)).when(marketWriteService).deleteMarket(any());
         //when
         //then
-        mockMvc.perform(delete("/api/v1/market/delete"))
+        mockMvc.perform(delete("/api/v1/market/delete").principal(authentication))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.errorMessage").value(MARKET_STATUS_IS_NOT_APPROVED.getMessage()))
                 .andDo(print());
+    }
+
+    private UsernamePasswordAuthenticationToken getAuthToken(Long id) {
+        User user = User.builder().id(id).build();
+        return new UsernamePasswordAuthenticationToken(user, null);
     }
 }

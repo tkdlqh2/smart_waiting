@@ -14,7 +14,6 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 public class RedisConfig {
     @Value("${spring.redis.host}")
     private String host;
-
     @Value("${spring.redis.port}")
     private int port;
 
@@ -30,6 +29,8 @@ public class RedisConfig {
         Jackson2JsonRedisSerializer<Long> jackson2JsonRedisSerializer =
                 new Jackson2JsonRedisSerializer<>(Long.class);
         jackson2JsonRedisSerializer.setObjectMapper(objectMapper);
+        objectMapper.activateDefaultTyping(objectMapper.getPolymorphicTypeValidator(),
+                ObjectMapper.DefaultTyping.NON_FINAL);
 
         RedisTemplate<String,Long> template = new RedisTemplate<>();
         template.setConnectionFactory(redisConnectionFactory);

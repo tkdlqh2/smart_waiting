@@ -1,11 +1,9 @@
 package com.example.smart_waiting.domain.market.service;
 
-import com.example.smart_waiting.domain.market.dto.MarketDetails;
-import com.example.smart_waiting.domain.market.dto.MarketDto;
-import com.example.smart_waiting.domain.market.dto.MarketDtoForWaiting;
-import com.example.smart_waiting.domain.market.dto.MarketFilter;
+import com.example.smart_waiting.domain.market.dto.*;
 import com.example.smart_waiting.domain.market.entity.Market;
 import com.example.smart_waiting.domain.market.repository.MarketRepository;
+import com.example.smart_waiting.domain.market.repository.MarketWaitingTeamsRepository;
 import com.example.smart_waiting.domain.user.entity.User;
 import com.example.smart_waiting.domain.waiting.dto.WaitingsResult;
 import com.example.smart_waiting.exception.exception_class.MarketException;
@@ -57,4 +55,20 @@ public class MarketReadService {
         return new MarketDtoForWaiting(marketRepository.findByOwner(owner)
                 .orElseThrow(()-> new MarketException(MARKET_NOT_FOUND)));
     }
+
+    private final MarketWaitingTeamsRepository marketWaitingTeamsRepository;
+
+
+    public MarketWaitingInfoDTO getWaitingInfo(Long marketId) {
+
+        Long waitingTeamsNum = marketWaitingTeamsRepository.getWaitingTeamsNum(marketId);
+        Long totalExpectedTime = marketWaitingTeamsRepository.getExpectedTimePerTeam(marketId)
+                *waitingTeamsNum;
+
+        return MarketWaitingInfoDTO.builder()
+                .waitingTeams(waitingTeamsNum).
+                expectedMinutes(totalExpectedTime).
+                build();
+    }
+
 }
